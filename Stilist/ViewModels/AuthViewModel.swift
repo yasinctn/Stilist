@@ -8,64 +8,56 @@
 import SwiftUI
 import FirebaseAuth
 
-class AuthViewModel: ObservableObject {
-    @Published var user: User?
-    @Published var isSignedIn: Bool = false
-    @Published var errorMessage: String?
+final class AuthViewModel: ObservableObject {
     
-    init() {
-        let firebaseUser = Auth.auth().currentUser
-        self.user = Auth.auth().currentUser
-        
-        isSignedIn = user != nil
+    private var authService: AuthServiceProtocol?
+    
+    @Published var currentUser: User?
+    @Published var isSignedIn: Bool = false
+    
+    init(authService: AuthService? = AuthService()) {
+        self.authService = AuthService()
+        isSignedIn = currentUser != nil
     }
     
     // Kullanıcı Oluşturma
-    func createUser(email: String, password: String, completion: @escaping (Error?) -> Void) {
-        Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in
-            guard let self else { return }
+    func createUser(name: String, email: String, phoneNumber: String, password: String, completion: @escaping (Error?) -> Void) {
+        authService?.createUser(name: name, email: email, phoneNumber: phoneNumber, password: password, completion: { error in
             if let error = error {
-                self.errorMessage = error.localizedDescription
+                print(error.localizedDescription)
                 completion(error)
-                print("Error creating user: \(error.localizedDescription)")
-            } else {
-                self.user = Auth.auth().currentUser
-                self.isSignedIn = true
-                completion(nil)
-                print("User created successfully")
             }
-        }
+        })
+        
     }
     
     // Oturum Açma
     func signIn(email: String, password: String, completion: @escaping (Error?) -> Void) {
-        Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
+        authService?.signIn(email: email, password: password, completion: { [weak self] error in
             guard let self else { return }
             if let error = error {
-                self.errorMessage = error.localizedDescription
+                print(error.localizedDescription)
                 completion(error)
-                print("Error signing in: \(error.localizedDescription)")
-            } else {
-                self.user = Auth.auth().currentUser
+            }else {
+                self.currentUser = Auth.auth().currentUser
                 self.isSignedIn = true
                 completion(nil)
-                print("User signed in successfully")
             }
-        }
+        })
     }
     
     // Çıkış Yapma
     func signOut(completion: @escaping (Error?) -> Void) {
-        do {
-            try Auth.auth().signOut()
-            self.user = nil
-            self.isSignedIn = false
-            completion(nil)
-            print("User signed out successfully")
-        } catch let error {
-            completion(error)
-            self.errorMessage = error.localizedDescription
-            print("Error signing out: \(error.localizedDescription)")
-        }
+        authService?.signOut(completion: { [ weak self ] error in
+            guard let self else { return }
+            if let error = error {
+                print(error.localizedDescription)
+                completion(error)
+            }else {
+                completion(nil)
+                self.isSignedIn = false
+            }
+        })
     }
 }
+    

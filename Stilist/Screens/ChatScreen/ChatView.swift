@@ -49,7 +49,7 @@ struct ChatView: View {
             ScrollView {
                 VStack(spacing: 10) {
                     ForEach(messages) { message in
-                        MessageBubble(message: message)
+                        ChatBubble(message: message)
                     }
                 }
                 .padding(.horizontal)
@@ -94,7 +94,7 @@ struct ChatView: View {
 }
 
 // Message Bubble
-struct MessageBubble: View {
+struct ChatBubble: View {
     var message: Message
     var isCurrentUser: Bool {
         message.senderId == "user1" // Adjust based on the current user's ID

@@ -7,12 +7,16 @@
 
 import SwiftUI
 
-class NavigationViewModel: ObservableObject {
+final class NavigationViewModel: ObservableObject {
     @Published var path: [String] = []
+    @Published var inboxPath: [String] = []
     
     // Ekran geçişleri için bir işlev
     func navigateTo(_ destination: String) {
         path.append(destination)
+    }
+    func navigate(_ destination: String) {
+        inboxPath.append(destination)
     }
     
     // Geri dönme işlevi

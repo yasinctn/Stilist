@@ -1,5 +1,5 @@
 //
-//  MyBookingView.swift
+//  HomeView.swift
 //  Stilist
 //
 //  Created by Yasin Cetin on 16.11.2024.
@@ -7,16 +7,13 @@
 
 import SwiftUI
 
-struct MyBookingView: View {
+struct HomeView: View {
     
     @EnvironmentObject var navigationViewModel: NavigationViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
     
     var body: some View {
-        Text("Bookings")
+        Text(authViewModel.currentUser?.email ?? "")
     }
 }
 
-#Preview {
-    MyBookingView()
-}

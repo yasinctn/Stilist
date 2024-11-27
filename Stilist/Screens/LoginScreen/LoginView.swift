@@ -17,6 +17,8 @@ struct LoginView: View {
     @State private var rememberMe = false
     @State private var showAlert = false
     
+    @State private var errorMessage: String?
+    
     
     var body: some View {
         ZStack {
@@ -80,11 +82,14 @@ struct LoginView: View {
                 Button(action: {
                     //giriş işlemi
                     authViewModel.signIn(email: email, password: password) { error in
+                        
                         if let error = error {
-                            print(error.localizedDescription)
+                            
+                            errorMessage = error.localizedDescription
+                            showAlert = true
+                            print(showAlert)
                         }
                     }
-                    
                     
                 }) {
                     Text("Sign in")
@@ -131,17 +136,18 @@ struct LoginView: View {
                         .foregroundColor(.gray)
                     
                     Button(action: {
-                        // Sign in action
+                        
                     }) {
-                        Text("Sign in")
+                        Text("Barber Account")
                             .foregroundColor(.orange)
                             .fontWeight(.semibold)
                     }
                 }
+                .padding()
             }
-            .padding()
             
-            AlertView(isPresented: $showAlert, message: authViewModel.errorMessage)
+            AlertView(isPresented: $showAlert, message: errorMessage)
+            
         }
     }
 }

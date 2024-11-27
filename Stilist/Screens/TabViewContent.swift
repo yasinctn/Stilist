@@ -11,6 +11,8 @@ struct TabViewContent: View {
     
     @EnvironmentObject var navigationViewModel: NavigationViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
+    @EnvironmentObject var chatViewModel: ChatViewModel
+    @EnvironmentObject var appointmentViewModel: AppointmentViewModel
     
     var body: some View {
         
@@ -25,16 +27,23 @@ struct TabViewContent: View {
                     Image(systemName: "safari.fill")
                     Text("Explore")
                 }
-            MyBookingView()
+            AppointmentView()
+                .environmentObject(navigationViewModel)
+                .environmentObject(appointmentViewModel)
                 .tabItem {
                     Image(systemName: "calendar")
                     Text("My Booking")
                 }
+            
             InboxView()
+                .environmentObject(navigationViewModel)
+                .environmentObject(authViewModel)
+                .environmentObject(chatViewModel)
                 .tabItem {
                     Image(systemName: "bubble.left.and.bubble.right.fill")
                     Text("Inbox")
                 }
+            
             ProfileView()
                 .tabItem {
                     Image(systemName: "person.crop.circle")

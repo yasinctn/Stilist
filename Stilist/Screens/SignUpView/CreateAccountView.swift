@@ -10,13 +10,17 @@ import SwiftUI
 struct CreateAccountView: View {
     
     @EnvironmentObject var navigationViewModel: NavigationViewModel
-    @StateObject var authViewModel = AuthViewModel()
+    @EnvironmentObject var authViewModel: AuthViewModel
     
+    @State private var showAlert: Bool = false
+    
+    @State private var name = ""
     @State private var email = ""
+    @State private var phoneNumber = ""
     @State private var password = ""
-    @State private var rememberMe = false
-    @State private var showAlert = false
-   
+    
+    @State private var errorMessage: String?
+    
     
     var body: some View {
         ZStack {
@@ -24,72 +28,97 @@ struct CreateAccountView: View {
                 Spacer()
                 
                 // Title
-                Text("Create your Account")
+                Text("Fill Your Profile")
                     .font(.title)
                     .fontWeight(.bold)
-                    .foregroundColor(.black)
+                    
                 
-                // Email & Password Fields
+                // Profile Picture Placeholder
+                ZStack {
+                    Image(systemName: "Person.crop.circle.fill")
+                        .resizable()
+                        .foregroundStyle(Color.white)
+                        .frame(width: 90, height: 90)
+                        .overlay {
+                            Image(systemName: "pencil.circle.fill")
+                                .foregroundColor(.orange)
+                                .background(Circle()
+                                    .fill(Color.white)
+                                    .frame(width: 24, height: 24))
+                        }
+                        .onTapGesture {
+                            // profil fotoğrafı seçimi
+                        }
+                    
+                    
+                }
+                
+                // Form Fields
                 VStack(spacing: 15) {
+                    TextField("Full Name", text: $name)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                    
                     TextField("Email", text: $email)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
-                        .overlay(
-                            HStack {
-                                Spacer()
-                                Image(systemName: "envelope")
-                                    .padding()
-                                
-                            }
-                            .padding(.leading, 10)
-                            .foregroundColor(.gray)
-                        )
                     
-                    SecureField("Password", text: $password)
+                    
+                    TextField("Phone Number", text: $phoneNumber)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                    
+                    TextField("Password", text: $password)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                    
+                    /*
+                    HStack {
+                        TextField("Date of Birth", text: Binding(
+                            get: { dateFormatter.string(from: dateOfBirth) },
+                            set: { dateOfBirth = dateFormatter.date(from: $0) ?? Date() }
+                        ))
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
                         .overlay(
                             HStack {
                                 Spacer()
-                                Image(systemName: "lock")
-                                    .padding()
-                                
+                                Image(systemName: "calendar")
                             }
-                            .padding(.leading, 10)
+                            .padding(.trailing, 10)
                             .foregroundColor(.gray)
                         )
-                }
-                .padding(.horizontal, 30)
-                
-                // Remember Me & Sign Up Button
-                HStack {
-                    Button(action: {
-                        rememberMe.toggle()
-                    }) {
-                        HStack {
-                            Image(systemName: rememberMe ? "checkmark.square" : "square")
-                                .foregroundColor(.orange)
-                            Text("Remember me")
-                                
-                        }
                     }
-                    Spacer()
-                }
-                .padding(.horizontal, 30)
-                
-                Button(action: {
-                    authViewModel.createUser(email: email, password: password) { error in
-                        if let error = error {
-                            showAlert = true
-                        }else {
-                            navigationViewModel.navigateTo("FillProfileView")
-                        }
-                    }
+                    */
                     
+                }
+                
+                .padding(.horizontal, 30)
+                
+                // Continue Button
+                Button(action: {
+                    authViewModel.createUser(name: name, email: email, phoneNumber: phoneNumber, password: password) { error in
+                        if let error = error {
+                            errorMessage = error.localizedDescription
+                            showAlert = true
+                            print(error.localizedDescription)
+                            
+                        }
+                    }
+                    authViewModel.signIn(email: email, password: password) { error in
+                        if let error = error {
+                            errorMessage = error.localizedDescription
+                            showAlert = true
+                            print(error.localizedDescription)
+                        }
+                    }
                 }) {
-                    Text("Sign up")
+                    Text("Continue")
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
@@ -98,52 +127,18 @@ struct CreateAccountView: View {
                         .cornerRadius(8)
                 }
                 .padding(.horizontal, 30)
-                
-                Spacer().frame(height: 20)
-                
-                // Divider
-                HStack {
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundColor(.gray)
-                    
-                    Text("or continue with")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                    
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundColor(.gray)
-                }
-                .padding(.horizontal, 30)
-                
-                // Social Buttons
-                HStack(spacing: 20) {
-                    SocialLoginIcon(imageName: "facebook")
-                    SocialLoginIcon(imageName: "google")
-                    SocialLoginIcon(imageName: "applelogo")
-                }
-                
                 Spacer()
-                
-                // Sign in link
-                HStack {
-                    Text("Already have an account?")
-                        .foregroundColor(.gray)
-                    
-                    Button(action: {
-                        // Sign in action
-                    }) {
-                        Text("Sign in")
-                            .foregroundColor(.orange)
-                            .fontWeight(.semibold)
-                    }
-                }
             }
             .padding()
             
-            AlertView(isPresented: $showAlert, message: authViewModel.errorMessage)
+            AlertView(isPresented: $showAlert, message: errorMessage)
         }
+    }
+    
+    private var dateFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        return formatter
     }
 }
 

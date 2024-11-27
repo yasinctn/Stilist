@@ -12,6 +12,7 @@ struct ProfileView: View {
     @EnvironmentObject var authViewModel: AuthViewModel 
     
     @State private var showAlert = false
+    @State private var errorMessage: String?
     
     var body: some View {
         NavigationView {
@@ -24,11 +25,11 @@ struct ProfileView: View {
                             .frame(width: 80, height: 80)
                             .clipShape(Circle())
                         
-                        Text(authViewModel.user?.displayName ?? "Loading...")
+                        Text(authViewModel.currentUser?.displayName ?? "Loading...")
                             .font(.title2)
                             .fontWeight(.bold)
                         
-                        Text(authViewModel.user?.email ?? "Loading...")
+                        Text(authViewModel.currentUser?.email ?? "Loading...")
                             .font(.subheadline)
                             .foregroundColor(.gray)
                     }
@@ -65,6 +66,7 @@ struct ProfileView: View {
                             Button(action: {
                                 authViewModel.signOut { error in
                                     if let error {
+                                        errorMessage = error.localizedDescription
                                         showAlert = true
                                     }
                                 }
@@ -77,7 +79,7 @@ struct ProfileView: View {
                     .listStyle(InsetGroupedListStyle())
                 }
                 
-                AlertView(isPresented: $showAlert, message: authViewModel.errorMessage)
+                AlertView(isPresented: $showAlert, message: errorMessage)
             }
             
         }

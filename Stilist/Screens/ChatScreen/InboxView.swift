@@ -9,11 +9,12 @@ import SwiftUI
 
 struct InboxView: View {
     
-    @EnvironmentObject var navigationViewModel: NavigationViewModel
-    @EnvironmentObject var authViewModel: AuthViewModel
+    @EnvironmentObject private var navigationViewModel: NavigationViewModel
+    @EnvironmentObject private var authViewModel: AuthViewModel
+    @EnvironmentObject private var chatViewModel: ChatViewModel
     
     var body: some View {
-        NavigationView {
+        NavigationStack(path: $navigationViewModel.inboxPath) {
             VStack {
                 HStack {
                     Text("Inbox")
@@ -22,7 +23,7 @@ struct InboxView: View {
                     Spacer()
                     
                     Button {
-                        //arama
+                        navigationViewModel.navigate("message")
                     } label: {
                         Image(systemName: "magnifyingglass")
                             .font(.title2)
@@ -32,7 +33,7 @@ struct InboxView: View {
 
                     
                     Button {
-                        //yeni mesaj
+                        navigationViewModel.navigate("message")
                     } label: {
                         Image(systemName: "square.and.pencil")
                             .font(.title2)
@@ -51,7 +52,21 @@ struct InboxView: View {
                 
             }
             .navigationBarHidden(true)
+            .navigationDestination(for: String.self) { destination in
+                switch destination {
+                case "message":
+                    MessageView()
+                        .environmentObject(authViewModel)
+                        .environmentObject(chatViewModel)
+                        .environmentObject(navigationViewModel)
+                default:
+                    EmptyView()
+                }
+            }
         }
+        
+        
+        
     }
 }
 

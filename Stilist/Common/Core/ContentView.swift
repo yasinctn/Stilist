@@ -8,20 +8,23 @@
 import SwiftUI
 
 struct ContentView: View {
+    
     @StateObject private var navigationViewModel = NavigationViewModel()
     @StateObject private var authViewModel = AuthViewModel()
+    @StateObject private var chatViewModel = ChatViewModel(chatService: ChatService())
+    @StateObject private var appointmentViewModel = AppointmentViewModel()
+    
     
     var body: some View {
         
         
         if authViewModel.isSignedIn {
             
-            
             TabViewContent()
+                .environmentObject(appointmentViewModel)
                 .environmentObject(navigationViewModel)
                 .environmentObject(authViewModel)
-            
-            
+                .environmentObject(chatViewModel)
             
         } else {
             
@@ -33,10 +36,6 @@ struct ContentView: View {
                         switch destination {
                         case "CreateAccount":
                             CreateAccountView()
-                                .environmentObject(navigationViewModel)
-                                .environmentObject(authViewModel)
-                        case "FillProfileView":
-                            FillProfileView()
                                 .environmentObject(navigationViewModel)
                                 .environmentObject(authViewModel)
                         case "LoginView":
