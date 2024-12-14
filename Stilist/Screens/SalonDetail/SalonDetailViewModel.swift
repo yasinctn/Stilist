@@ -11,7 +11,7 @@ final class SalonDetailViewModel: ObservableObject {
     
     private var firestoreService: FirestoreServiceProtocol?
     
-    @Published var salonDetail: SalonDetail? = nil
+    @Published var salonDetail: SalonDetail?
     @Published var reviews: [Review] = []
     @Published var specialists: [Specialist] = []
     @Published var services: [Service] = []
@@ -20,7 +20,8 @@ final class SalonDetailViewModel: ObservableObject {
         self.firestoreService = firestoreService
     }
     
-    func getSalonDetail(for salonId: UUID) {
+    func getSalonDetail(for salonId: String?) {
+        guard let salonId else { return }
         firestoreService?.fetchSalonDetails(salonId: salonId, completion: { salonDetail in
             if let salonDetail {
                 self.salonDetail = salonDetail

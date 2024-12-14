@@ -11,7 +11,7 @@ import FirebaseFirestore
 
 protocol FirestoreServiceProtocol: AnyObject {
     func fetchSalons(completion: @escaping ([Salon]?) -> Void)
-    func fetchSalonDetails(salonId: UUID, completion: @escaping (SalonDetail?) -> Void)
+    func fetchSalonDetails(salonId: String, completion: @escaping (SalonDetail?) -> Void)
 }
 
 final class FirestoreService {
@@ -36,7 +36,8 @@ extension FirestoreService: FirestoreServiceProtocol {
                 
                 let salons: [Salon] = documents.compactMap { doc in
                     let data = doc.data()
-                    guard let name = data["name"] as? String,
+                    guard let id = data["id"] as? String,
+                          let name = data["name"] as? String,
                           let address = data["address"] as? String,
                           let rating = data["rating"] as? String,
                           let latitude = data["latitude"] as? Double,
@@ -47,6 +48,7 @@ extension FirestoreService: FirestoreServiceProtocol {
                     }
                     
                     return Salon(
+                        id: id,
                         name: name,
                         address: address,
                         distance: "",
@@ -60,20 +62,28 @@ extension FirestoreService: FirestoreServiceProtocol {
         }
     }
     
-    func fetchSalonDetails(salonId: UUID, completion: @escaping (SalonDetail?) -> Void) {
-        db.collection("salons").document(salonId.uuidString).getDocument { snapshot, error in
-            if let error {
-                print("detay hatası: \(error.localizedDescription)")
-            }else {
-                do {
-                    var salonDetail = try snapshot?.data(as: SalonDetail.self)
-                    completion(salonDetail)
-                }catch {
+    func fetchSalonDetails(salonId: String, completion: @escaping (SalonDetail?) -> Void) {
+            db.collection("salons").document(salonId).getDocument { snapshot, error in
+                if let error = error {
+                    print("Detay hatası: \(error.localizedDescription)")
                     completion(nil)
-                    print("decode error")
+                    return
                 }
                 
+                guard let document = snapshot else {
+                    print("Salon bulunamadı.")
+                    completion(nil)
+                    return
+                }
+
+                // Veriyi doğrudan modelle decode etme
+                do {
+                    let salonDetail = try document.data(as: SalonDetail.self)
+                    completion(salonDetail)
+                } catch {
+                    print("Veri dönüştürme hatası: \(error)")
+                    completion(nil)
+                }
             }
         }
-    }
 }

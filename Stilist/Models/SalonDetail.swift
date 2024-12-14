@@ -14,7 +14,7 @@ struct SalonDetail: Codable {
     var phoneNumber: String?
     var description: String?
     var saloonType: String?
-    var rating: Double?
+    var rating: String?
     var reviewCount: Int?
     var isOpen: Bool?
     var specialists: [Specialist]?
@@ -24,23 +24,23 @@ struct SalonDetail: Codable {
 }
 
 struct WorkingHours: Codable {
-    let day: String // Örneğin: "Monday"
-    let openTime: String // Örneğin: "08:00 AM"
-    let closeTime: String // Örneğin: "09:00 PM"
+    let day: String? // Örneğin: "Monday"
+    let openTime: String? // Örneğin: "08:00 AM"
+    let closeTime: String? // Örneğin: "09:00 PM"
 }
 
 struct Service:Identifiable, Codable {
-    let id: String
-    let name: String
-    let description: String
-    let price: Double
+    let id: String?
+    let name: String?
+    let description: String?
+    let price: Double?
 }
 
 struct Review: Codable, Identifiable {
-    let id: String
-    let reviewerName: String
-    let profileImageURL: String
-    let rating: Double
-    let comment: String
-    let timeAgo: String
+    let id: String?
+    let reviewerName: String?
+    let profileImageURL: String?
+    let rating: Double?
+    let comment: String?
+    let timeAgo: String?
 }

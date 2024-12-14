@@ -12,7 +12,7 @@ struct SalonDetailView: View {
     
     @EnvironmentObject private var viewModel: SalonDetailViewModel
     
-    @State var selectedSalonId: UUID? = nil
+    @State var selectedSalonId: String?
     @State private var selectedTab = "Hakkımızda"
     @State private var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 40.7128, longitude: -74.0060),
@@ -24,7 +24,7 @@ struct SalonDetailView: View {
             VStack(alignment: .leading) {
                 
                 HStack {
-                    Text(selectedSalonId?.uuidString ?? "alamadık")
+                    Text(viewModel.salonDetail?.name ?? "")
                         .font(.title)
                         .fontWeight(.bold)
                     Spacer()
@@ -35,7 +35,7 @@ struct SalonDetailView: View {
                         .background(Color.green.opacity(0.1))
                         .cornerRadius(10)
                 }
-                Text(viewModel.salonDetail?.address ?? "Loading...")
+                Text(viewModel.salonDetail?.address ?? "")
                     .font(.subheadline)
                     .foregroundColor(.gray)
                 
@@ -63,16 +63,16 @@ struct SalonDetailView: View {
                 
                 // Uzmanlarımız (Our Specialist) Bölümü
                 VStack(alignment: .leading) {
-                    Text("Our Specialist")
+                    Text("Uzmanlarımız")
                         .font(.headline)
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 20) {
-                            ForEach(0..<5) { _ in
+                            ForEach(viewModel.salonDetail?.specialists ?? []) { specialist in
                                 VStack {
                                     Circle()
                                         .frame(width: 60, height: 60)
                                         .foregroundColor(.gray)
-                                    Text("Name")
+                                    Text(specialist.name ?? "")
                                         .font(.subheadline)
                                 }
                             }
@@ -100,9 +100,9 @@ struct SalonDetailView: View {
                 
                 Divider()
                 
-                // Seçilen Sekmeye Göre İçerik Gösterimi
-                if selectedTab == "Hakkımızda" {
-                    Text(viewModel.salonDetail?.description ?? "detay hatası")
+                switch selectedTab {
+                case "Hakkımızda":
+                    Text(viewModel.salonDetail?.description ?? "")
                         .padding(.top)
                     
                     // Çalışma Saatleri
@@ -118,8 +118,8 @@ struct SalonDetailView: View {
                     VStack(alignment: .leading, spacing: 5) {
                         Text("İletişim")
                             .font(.headline)
-                        Text("(406) 555 0120")
-                        Text("6993 Meadow Valley Terrace, New York")
+                        Text(viewModel.salonDetail?.phoneNumber ?? "")
+                        Text(viewModel.salonDetail?.address ?? "")
                     }
                     .padding(.top)
                     
@@ -140,38 +140,38 @@ struct SalonDetailView: View {
                             .cornerRadius(10)
                     }
                     .padding(.top)
-                } else if selectedTab == "Hizmetler"{
+                case "Hizmetler":
                     Text("Servisler")
                         .font(.headline)
                     VStack {
-                        ForEach(["Hair Cut", "Hair Coloring", "Hair Wash", "Shaving", "Skin Care"], id: \.self) { service in
+                        ForEach(viewModel.services) { service in
                             HStack {
-                                Text(service)
+                                Text(service.name ?? "")
                                 Spacer()
-                                Text("44 types")
+                                Text("")
                                     .foregroundColor(.gray)
                             }
                             Divider()
                         }
                     }
-                } else if selectedTab == "Yorumlar" {
+                case "Yorumlar":
                     Text("Yorumlar")
                         .font(.headline)
                     VStack(spacing: 10) {
-                        ForEach(viewModel.salonDetail?.reviews ?? []) { review in
+                        ForEach(viewModel.reviews) { review in
                             HStack {
                                 Circle()
                                     .frame(width: 40, height: 40)
                                     .foregroundColor(.gray)
                                 VStack(alignment: .leading) {
-                                    Text(review.reviewerName)
+                                    Text(review.reviewerName ?? "yorumcu adı boş")
                                         .font(.headline)
-                                    Text(review.comment)
+                                    Text(review.comment ?? "yorum boş")
                                         .foregroundColor(.gray)
                                 }
                                 Spacer()
                                 VStack {
-                                    Text(review.timeAgo)
+                                    Text(review.timeAgo ?? "")
                                     Image(systemName: "heart")
                                 }
                             }
@@ -179,13 +179,16 @@ struct SalonDetailView: View {
                         }
                         
                     }
+                default:
+                    EmptyView()
                 }
+                
             }
             .padding()
         }
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            
+            viewModel.getSalonDetail(for: selectedSalonId)
         }
     }
 }

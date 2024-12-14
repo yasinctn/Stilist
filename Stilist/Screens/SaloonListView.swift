@@ -10,13 +10,7 @@ import MapKit
 
 struct SalonListView: View {
     @State private var searchQuery: String = ""
-    let salons: [Salon] = [
-        Salon(name: "Barbarella Salon", address: "0570 Ruskin Pass", distance: "2.9 km", rating: "4.3", coordinate: CLLocationCoordinate2D(latitude: 37.7849, longitude: -122.4094), imageName: "salon1"),
-        Salon(name: "The Godbarber Salon", address: "5 Southridge Hill", distance: "4.4 km", rating: "4.8", coordinate: CLLocationCoordinate2D(latitude: 37.7799, longitude: -122.4294), imageName: "salon2"),
-        Salon(name: "Belle Curls Salon", address: "0993 Novick Parkway", distance: "1.2 km", rating: "4.8", coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), imageName: "salon3"),
-        Salon(name: "Hairbreak Salon", address: "2759 Pearson Terrace", distance: "3.6 km", rating: "4.8", coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), imageName: "salon4"),
-        Salon(name: "Choppers Salon", address: "6 Laurel Pass", distance: "1.5 km", rating: "4.2", coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), imageName: "salon5")
-    ]
+    
     
     var body: some View {
         NavigationView {
@@ -51,12 +45,14 @@ struct SalonListView: View {
                 .padding(.top, 5)
                 
                 // Salon List
+                /*
                 List(salons) { salon in
                     SalonRow(salon: salon)
                         .listRowInsets(EdgeInsets())
                         .padding(.horizontal)
                 }
                 .listStyle(PlainListStyle())
+                 */
             }
             .navigationTitle("")
             .navigationBarHidden(true)

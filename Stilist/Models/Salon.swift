@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 
 struct Salon: Identifiable {
-    let id = UUID()
+    let id: String
     let name: String
     let address: String
     let distance: String
@@ -22,7 +22,7 @@ struct aSalon: Identifiable, Codable {
     let id: String
     let name: String
     let address: String
-    let distance: String // Kullanıcının konumuna göre hesaplanacak
+    let distance: String
     let rating: String
     let latitude: Double
     let longitude: Double
@@ -57,7 +57,7 @@ struct FirebaseSalon: Codable {
 extension Salon {
     func toFirebaseSalon() -> FirebaseSalon {
         FirebaseSalon(
-            id: id.uuidString,
+            id: id,
             name: name,
             address: address,
             distance: distance,
