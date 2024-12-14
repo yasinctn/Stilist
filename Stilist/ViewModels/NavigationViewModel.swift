@@ -9,6 +9,11 @@ import SwiftUI
 
 final class NavigationViewModel: ObservableObject {
     @Published var path: [String] = []
+    @Published var homePath: [String] = []
+    @Published var explorePath: [String] = []
+    @Published var bookingPath: [String] = []
+    @Published var messagePath: [String] = []
+    @Published var profilePath: [String] = []
     @Published var inboxPath: [String] = []
     
     // Ekran geçişleri için bir işlev
@@ -28,5 +33,6 @@ final class NavigationViewModel: ObservableObject {
     func goToRoot() {
         path = []
     }
+    
     
 }

@@ -16,3 +16,4 @@ struct Appointment: Identifiable, Codable {
     var specialistId: String
     var userId: String
 }
+

@@ -26,7 +26,7 @@ struct LoginView: View {
                 Spacer()
                 
                 // Title
-                Text("Login to your Account")
+                Text("Hesabınıza giriş yapın")
                     .font(.title)
                     .fontWeight(.bold)
                     .foregroundColor(.black)
@@ -37,6 +37,7 @@ struct LoginView: View {
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
+                        .keyboardType(.emailAddress)
                         .overlay(
                             HStack {
                                 Spacer()
@@ -47,10 +48,11 @@ struct LoginView: View {
                             .foregroundColor(.gray)
                         )
                     
-                    SecureField("Password", text: $password)
+                    SecureField("Parola", text: $password)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
+                        .keyboardType(.numberPad)
                         .overlay(
                             HStack {
                                 Spacer()
@@ -71,8 +73,9 @@ struct LoginView: View {
                         HStack {
                             Image(systemName: rememberMe ? "checkmark.square" : "square")
                                 .foregroundColor(.orange)
-                            Text("Remember me")
-                                .foregroundColor(.black)
+                            Text("Beni hatırla")
+                                .foregroundStyle(Color.orange)
+                                
                         }
                     }
                     Spacer()
@@ -92,7 +95,7 @@ struct LoginView: View {
                     }
                     
                 }) {
-                    Text("Sign in")
+                    Text("Giriş yap")
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)

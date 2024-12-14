@@ -51,15 +51,15 @@ struct AppointmentView: View {
                 HStack(spacing: 10) {
                     ForEach(viewModel.specialists) { specialist in
                         VStack {
-                            Image(specialist.imageName)
+                            Image("")
                                 .resizable()
                                 .frame(width: 60, height: 60)
                                 .clipShape(Circle())
                             
-                            Text(specialist.name)
+                            Text("specialist.name")
                                 .font(.subheadline)
                             
-                            Text(specialist.role)
+                            Text("specialist.role")
                                 .font(.caption)
                         }
                         .padding()
@@ -94,5 +94,5 @@ struct AppointmentView: View {
 
 
 #Preview {
-    AppointmentView()
+    AppointmentView().environmentObject(AppointmentViewModel())
 }

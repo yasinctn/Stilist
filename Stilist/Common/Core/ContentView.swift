@@ -13,6 +13,8 @@ struct ContentView: View {
     @StateObject private var authViewModel = AuthViewModel()
     @StateObject private var chatViewModel = ChatViewModel(chatService: ChatService())
     @StateObject private var appointmentViewModel = AppointmentViewModel()
+    @StateObject private var locationManager = LocationManager()
+    @StateObject private var homeViewModel = HomeViewModel(firestoreService: FirestoreService())
     
     
     var body: some View {
@@ -21,11 +23,15 @@ struct ContentView: View {
         if authViewModel.isSignedIn {
             
             TabViewContent()
+                .environmentObject(locationManager)
                 .environmentObject(appointmentViewModel)
                 .environmentObject(navigationViewModel)
                 .environmentObject(authViewModel)
                 .environmentObject(chatViewModel)
-            
+                .environmentObject(homeViewModel)
+                .animation(.easeInOut, value: authViewModel.isSignedIn)
+                .transition(.slide)
+
         } else {
             
             NavigationStack(path: $navigationViewModel.path) {
@@ -42,6 +48,17 @@ struct ContentView: View {
                             LoginView()
                                 .environmentObject(navigationViewModel)
                                 .environmentObject(authViewModel)
+                            
+                        case "CreateSaloonAccount":
+                            CreateSaloonAccountView()
+                                .environmentObject(locationManager)
+                                .environmentObject(navigationViewModel)
+                                .environmentObject(authViewModel)
+                        case "CreateSpecialistAccount":
+                            CreateSpecialistAccountView()
+                                .environmentObject(locationManager)
+                                .environmentObject(navigationViewModel)
+                                .environmentObject(authViewModel)
                         default:
                             Text("Unknown Destination")
                         }
@@ -51,6 +68,7 @@ struct ContentView: View {
             .transition(.slide)
         }
     }
+    
 }
 
 

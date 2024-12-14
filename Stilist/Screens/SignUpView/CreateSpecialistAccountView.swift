@@ -1,13 +1,13 @@
 //
-//  CreateAccountView.swift
+//  CreateSpecialistAccountView.swift
 //  Stilist
 //
-//  Created by Yasin Cetin on 15.11.2024.
+//  Created by Yasin Cetin on 7.12.2024.
 //
 
 import SwiftUI
 
-struct CreateAccountView: View {
+struct CreateSpecialistAccountView: View {
     
     @EnvironmentObject var navigationViewModel: NavigationViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
@@ -31,7 +31,7 @@ struct CreateAccountView: View {
                 Text("Profilini oluştur")
                     .font(.title)
                     .fontWeight(.bold)
-                
+                    
                 
                 // Profile Picture Placeholder
                 ZStack {
@@ -78,68 +78,63 @@ struct CreateAccountView: View {
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
                         .keyboardType(.numberPad)
+                    
+                   
+                    
+                }
+                
+                .padding(.horizontal, 30)
+                
+                // Continue Button
+                Button(action: {
+                    authViewModel.createUser(name: name, email: email, phoneNumber: phoneNumber, password: password, role: .specialist) { error in
+                        if let error = error {
+                            errorMessage = error.localizedDescription
+                            showAlert = true
+                            print(error.localizedDescription)
+                            
+                        
+                        }
+                    }
+                    
+                }) {
+                    Text("Kaydol")
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.orange)
+                        .cornerRadius(8)
                 }
                 .padding(.horizontal, 30)
-                    // Continue Button
-                    Button(action: {
-                        authViewModel.createUser(name: name, email: email, phoneNumber: phoneNumber, password: password, role: .customer) { error in
-                            if let error = error {
-                                errorMessage = error.localizedDescription
-                                showAlert = true
-                                print(error.localizedDescription)
-                                
-                                
-                            }
-                        }
-                    
-                    }) {
-                        Text("Kaydol")
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.orange)
-                            .cornerRadius(8)
-                    }
-                    .padding(.horizontal, 30)
-                    Spacer()
-                    
-                    HStack {
-                        Text("Uzmanlar için")
-                            .foregroundColor(.gray)
-                        
-                        Button(action: {
-                            navigationViewModel.navigateTo("CreateSpecialistAccount")
-                        }) {
-                            Text("Hesap Oluştur")
-                                .foregroundColor(.orange)
-                                .fontWeight(.semibold)
-                        }
-                    }
-                    
-                    HStack {
-                        Text("İşletme için")
-                            .foregroundColor(.gray)
-                        
-                        Button(action: {
-                            navigationViewModel.navigateTo("CreateSaloonAccount")
-                        }) {
-                            Text("Hesap Oluştur")
-                                .foregroundColor(.orange)
-                                .fontWeight(.semibold)
-                        }
-                    }
-                }
-                .padding()
+                Spacer()
                 
-                AlertView(isPresented: $showAlert, message: errorMessage)
+                
             }
+            .padding()
+            
+            AlertView(isPresented: $showAlert, message: errorMessage)
         }
     }
-
-
-#Preview {
-    CreateAccountView()
 }
 
+struct SocialLoginIcon: View {
+    var imageName: String
+    
+    var body: some View {
+        Button(action: {
+            // Social login action
+        }) {
+            Image(systemName: imageName)
+                .frame(width: 50, height: 50)
+                .background(Color.white)
+                .cornerRadius(25)
+                .shadow(radius: 1)
+                .foregroundColor(.black)
+        }
+    }
+}
 
+#Preview {
+    CreateSpecialistAccountView()
+}

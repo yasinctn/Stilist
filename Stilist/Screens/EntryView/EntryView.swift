@@ -61,7 +61,7 @@ struct EntryView: View {
             Button(action: {
                 navigationViewModel.navigateTo("LoginView")
             }) {
-                Text("Sign in with password")
+                Text("Şifre ile giriş yap")
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
@@ -75,13 +75,13 @@ struct EntryView: View {
             
             // Sign up link
             HStack {
-                Text("Don't have an account?")
+                Text("Hesabın yok mu?")
                     .foregroundColor(.gray)
                 
                 Button(action: {
                     navigationViewModel.navigateTo("CreateAccount")
                 }) {
-                    Text("Sign up")
+                    Text("Kaydol")
                         .foregroundColor(.orange)
                         .fontWeight(.semibold)
                 }

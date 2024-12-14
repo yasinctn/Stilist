@@ -17,18 +17,23 @@ final class AuthViewModel: ObservableObject {
     
     init(authService: AuthService? = AuthService()) {
         self.authService = AuthService()
+        currentUser = Auth.auth().currentUser
         isSignedIn = currentUser != nil
     }
     
     // Kullanıcı Oluşturma
-    func createUser(name: String, email: String, phoneNumber: String, password: String, completion: @escaping (Error?) -> Void) {
-        authService?.createUser(name: name, email: email, phoneNumber: phoneNumber, password: password, completion: { error in
+    func createUser(name: String, email: String, phoneNumber: String, password: String, role: UserRole, completion: @escaping (Error?) -> Void) {
+        authService?.createUser(name: name, email: email, phoneNumber: phoneNumber, password: password, role: role, completion: { [ weak self ] error in
+            guard let self else { return }
             if let error = error {
                 print(error.localizedDescription)
                 completion(error)
+            }else {
+                self.currentUser = Auth.auth().currentUser
+                self.isSignedIn = true
+                completion(nil)
             }
         })
-        
     }
     
     // Oturum Açma
@@ -54,8 +59,8 @@ final class AuthViewModel: ObservableObject {
                 print(error.localizedDescription)
                 completion(error)
             }else {
-                completion(nil)
                 self.isSignedIn = false
+                completion(nil)
             }
         })
     }

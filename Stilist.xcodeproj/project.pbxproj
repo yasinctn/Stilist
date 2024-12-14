@@ -46,9 +46,22 @@
 		B0ACBD1D2CE0D171002889AD /* StilistUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StilistUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B0DDB03D2CFB6FBC00D19EEA /* Exceptions for "Stilist" folder in "Stilist" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B0ACBD022CE0D16F002889AD /* Stilist */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B0ACBD052CE0D16F002889AD /* Stilist */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B0DDB03D2CFB6FBC00D19EEA /* Exceptions for "Stilist" folder in "Stilist" target */,
+			);
 			path = Stilist;
 			sourceTree = "<group>";
 		};
@@ -445,6 +458,10 @@
 				DEVELOPMENT_TEAM = M3L7HK72ZK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Stilist/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "We need your location to provide personalized results and directions.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "We use your location to recommend salons near you.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to show nearby salons.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -474,6 +491,10 @@
 				DEVELOPMENT_TEAM = M3L7HK72ZK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Stilist/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "We need your location to provide personalized results and directions.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "We use your location to recommend salons near you.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to show nearby salons.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

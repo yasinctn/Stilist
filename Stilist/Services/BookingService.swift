@@ -6,3 +6,15 @@
 //
 
 import Foundation
+
+protocol BookingServiceProtocol {
+    
+}
+
+final class BookingService {
+    
+}
+
+extension BookingService: BookingServiceProtocol {
+    
+}
