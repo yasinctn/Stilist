@@ -16,6 +16,5 @@ struct AppUser: Identifiable {
     let phoneNumber: String
     let profileImageURL: String = ""
     let userRole: UserRole
-    
 }
  

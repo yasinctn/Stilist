@@ -23,7 +23,7 @@ struct CategoryButton: View {
             }
             Text(title)
                 .font(.footnote)
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
         }
     }
 }

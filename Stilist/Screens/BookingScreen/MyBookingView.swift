@@ -57,7 +57,7 @@ struct BookingTabButton: View {
             selectedTab = title
         }) {
             Text(title)
-                .font(.headline)
+                .font(.subheadline)
                 .foregroundColor(selectedTab == title ? .white : .orange)
                 .padding()
                 .background(selectedTab == title ? Color.orange : Color.clear)
@@ -75,7 +75,7 @@ struct BookingCard: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(booking.date)
                 .font(.subheadline)
-                .foregroundColor(.gray)
+                .foregroundColor(.primary)
             HStack {
                 Image(booking.imageName)
                     .resizable()
@@ -86,14 +86,14 @@ struct BookingCard: View {
                         .font(.headline)
                     Text(booking.services)
                         .font(.subheadline)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.primary)
                 }
                 Spacer()
                 Text(booking.status)
                     .font(.footnote)
                     .foregroundColor(booking.statusColor)
                     .padding(6)
-                    .background(booking.statusColor.opacity(0.2))
+                    //.background(booking.statusColor.opacity(0.2))
                     .cornerRadius(10)
             }
             if showActions {
@@ -110,7 +110,7 @@ struct BookingCard: View {
             }
         }
         .padding()
-        .background(Color.white)
+        .background(Color(UIColor.secondarySystemBackground))
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
     }

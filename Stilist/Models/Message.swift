@@ -10,7 +10,7 @@ import FirebaseFirestore
 
 struct Message: Identifiable {
     
-    @DocumentID var id: String?
+    var id: String? = UUID().uuidString
     var chatId: String
     var senderId: String
     var content: String

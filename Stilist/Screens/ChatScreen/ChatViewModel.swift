@@ -11,8 +11,6 @@ import FirebaseFirestore
 import FirebaseFirestoreCombineSwift
 import SwiftUI
 
-
-
 final class ChatViewModel: ObservableObject {
     
     private let chatService: ChatServiceProtocol?
@@ -39,26 +37,12 @@ final class ChatViewModel: ObservableObject {
     }
     
     func sendMessage(message: Message?) {
-        chatService?.addMessage(message!, completion: { result in
-            
-            
-        })
+        
+        if let message {
+            chatService?.addMessage(message, completion: { result in
+                
+                
+            })
+        }
     }
-    
-    func fetchMessages(chatId: String) -> [Message]? {
-        var messages: [Message]?
-        chatService?.fetchMessages(for: chatId, completion: { result in
-            do{
-                try messages = result.get()
-            }catch {
-                messages = nil
-                print(error.localizedDescription)
-            }
-        })
-        return messages
-    }
-    
-    
-    
-    
 }

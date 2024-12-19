@@ -21,6 +21,8 @@ struct SalonDetail: Codable {
     var workingHours: [WorkingHours]? // Haftanın günlerine göre çalışma saatleri
     var services: [Service]?
     var reviews: [Review]?
+    var latitude: Double?
+    var longitude: Double?
 }
 
 struct WorkingHours: Codable {

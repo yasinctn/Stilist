@@ -22,7 +22,6 @@ final class AuthService: ObservableObject {
     init() {
         self.currentUser = Auth.auth().currentUser
         
-        
     }
     
     

@@ -13,11 +13,7 @@ struct SalonDetailView: View {
     @EnvironmentObject private var viewModel: SalonDetailViewModel
     
     @State var selectedSalonId: String?
-    @State private var selectedTab = "Hakkımızda"
-    @State private var region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 40.7128, longitude: -74.0060),
-        span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-    )
+    @State private var selectedTab: String = "Hakkımızda"
     
     var body: some View {
         ScrollView {
@@ -46,15 +42,38 @@ struct SalonDetailView: View {
                             .foregroundColor(.yellow)
                         Text("4.8")
                     }
-                    Text("(3,279 yorum)")
+                    Text(String(viewModel.reviews.count))
                         .foregroundColor(.gray)
                     Spacer()
+                    
                     HStack {
                         
-                        Image(systemName: "message")
-                        Image(systemName: "phone")
-                        Image(systemName: "location")
-                        Image(systemName: "square.and.arrow.up")
+                        NavigationLink {
+                            MessageView(chatID: viewModel.salonDetail?.id ?? "")
+                                .environmentObject(MessageViewModel())
+                        } label: {
+                            Text("Mesaj")
+                                .padding(7)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.orange)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
+                        
+                        NavigationLink {
+                            AppointmentView()
+                                .environmentObject(AppointmentViewModel())
+                                .environmentObject(AuthViewModel())
+                        } label: {
+                            Text("Randevu al")
+                                .padding(7)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.orange)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
+
+                        
                     }
                     .font(.system(size: 20))
                 }
@@ -100,85 +119,14 @@ struct SalonDetailView: View {
                 
                 Divider()
                 
+                
                 switch selectedTab {
                 case "Hakkımızda":
-                    Text(viewModel.salonDetail?.description ?? "")
-                        .padding(.top)
-                    
-                    // Çalışma Saatleri
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text("Çalışma Saatleri")
-                            .font(.headline)
-                        Text("Hafta içi: 08:00 - 21:00")
-                        Text("Hafta sonu: 10:00 - 20:00 ")
-                    }
-                    .padding(.top)
-                    
-                    // İletişim Bilgileri
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text("İletişim")
-                            .font(.headline)
-                        Text(viewModel.salonDetail?.phoneNumber ?? "")
-                        Text(viewModel.salonDetail?.address ?? "")
-                    }
-                    .padding(.top)
-                    
-                    // Harita Görünümü
-                    Map(coordinateRegion: $region)
-                        .frame(height: 200)
-                        .cornerRadius(10)
-                        .padding(.top)
-                    
-                    Button(action: {
-                        
-                    }) {
-                        Text("Randevu al")
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.orange)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                    }
-                    .padding(.top)
+                    AboutUsView(salonDetail: viewModel.salonDetail)
                 case "Hizmetler":
-                    Text("Servisler")
-                        .font(.headline)
-                    VStack {
-                        ForEach(viewModel.services) { service in
-                            HStack {
-                                Text(service.name ?? "")
-                                Spacer()
-                                Text("")
-                                    .foregroundColor(.gray)
-                            }
-                            Divider()
-                        }
-                    }
+                    ServicesView(services: viewModel.services)
                 case "Yorumlar":
-                    Text("Yorumlar")
-                        .font(.headline)
-                    VStack(spacing: 10) {
-                        ForEach(viewModel.reviews) { review in
-                            HStack {
-                                Circle()
-                                    .frame(width: 40, height: 40)
-                                    .foregroundColor(.gray)
-                                VStack(alignment: .leading) {
-                                    Text(review.reviewerName ?? "yorumcu adı boş")
-                                        .font(.headline)
-                                    Text(review.comment ?? "yorum boş")
-                                        .foregroundColor(.gray)
-                                }
-                                Spacer()
-                                VStack {
-                                    Text(review.timeAgo ?? "")
-                                    Image(systemName: "heart")
-                                }
-                            }
-                            Divider()
-                        }
-                        
-                    }
+                    ReviewsView(reviews: viewModel.reviews)
                 default:
                     EmptyView()
                 }
@@ -192,6 +140,7 @@ struct SalonDetailView: View {
         }
     }
 }
+
 #Preview {
     SalonDetailView()
         .environmentObject(ExploreViewModel())

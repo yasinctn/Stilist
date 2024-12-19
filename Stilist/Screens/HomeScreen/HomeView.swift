@@ -53,7 +53,7 @@ struct HomeView: View {
                 //Map
                 
                 NavigationLink {
-                    //gidilecek ekran
+                    
                 } label: {
                     Map {
                         Marker("siz", coordinate: locationManager.userLocation ?? .coffeeShopCoordinate)

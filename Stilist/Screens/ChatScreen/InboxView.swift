@@ -28,7 +28,7 @@ struct InboxView: View {
                         Image(systemName: "magnifyingglass")
                             .font(.title2)
                             .padding(.horizontal)
-                            .foregroundStyle(Color.black)
+                            .foregroundStyle(Color.primary)
                     }
 
                     
@@ -37,7 +37,7 @@ struct InboxView: View {
                     } label: {
                         Image(systemName: "square.and.pencil")
                             .font(.title2)
-                            .foregroundStyle(Color.black)
+                            .foregroundStyle(Color.primary)
                     }
                 }
                 .padding()
@@ -56,6 +56,7 @@ struct InboxView: View {
                 switch destination {
                 case "message":
                     MessageView()
+                        .environmentObject(MessageViewModel())
                         .environmentObject(authViewModel)
                         .environmentObject(chatViewModel)
                         .environmentObject(navigationViewModel)

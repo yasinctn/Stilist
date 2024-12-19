@@ -10,7 +10,7 @@ import FirebaseFirestore
 
 struct Chat: Identifiable {
     
-    @DocumentID var id: String?
+    var id: String?
     let name: String
     var participants: [String]
     let lastMessage: String

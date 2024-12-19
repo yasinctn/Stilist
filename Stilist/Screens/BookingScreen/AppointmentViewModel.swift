@@ -12,26 +12,54 @@ import Firebase
 class AppointmentViewModel: ObservableObject {
     @Published var selectedDate: Date = Date()
     @Published var selectedTime: String = ""
-    @Published var selectedSpecialistId: String = ""
+    @Published var selectedSpecialistId: String = "765464654654"
     @Published var specialists: [Specialist] = []
-
-    init() {
+    @Published var appointments: [Appointment] = []
+    
+    private let bookingService: BookingServiceProtocol
+    
+    init(bookingService: BookingServiceProtocol = BookingService()) {
+        self.bookingService = bookingService
         fetchSpecialists()
     }
-
+    
     func fetchSpecialists() {
-        // Firebase'den uzman verilerini alıp `specialists` dizisine atayın
-    }
-
-    func saveAppointment(userId: String) {
-        let db = Firestore.firestore()
-        let newAppointment = Appointment(date: selectedDate, time: selectedTime, specialistId: selectedSpecialistId, userId: userId)
+        // Test verileri örnek olarak eklendi
         
-        do {
-            try db.collection("appointments").addDocument(from: newAppointment)
-            print("Randevu başarıyla kaydedildi")
-        } catch {
-            print("Randevu kaydedilemedi: \(error.localizedDescription)")
+    }
+    
+    func saveAppointment(userId: String) {
+        print("çağırıldı")
+        guard !selectedTime.isEmpty, !selectedSpecialistId.isEmpty else {
+            return
+        }
+        
+        let newAppointment = Appointment(
+            date: selectedDate,
+            time: selectedTime,
+            specialistId: selectedSpecialistId,
+            userId: userId
+        )
+        
+        bookingService.saveAppointment(newAppointment) { error in
+            if let error = error {
+                print("Randevu kaydedilemedi: \(error.localizedDescription)")
+            } else {
+                print("Randevu başarıyla kaydedildi!")
+            }
+        }
+    }
+    
+    func fetchAppointments(userId: String) {
+        bookingService.fetchAppointments(for: userId) { result in
+            switch result {
+            case .success(let appointments):
+                DispatchQueue.main.async {
+                    self.appointments = appointments
+                }
+            case .failure(let error):
+                print("Randevular alınamadı: \(error.localizedDescription)")
+            }
         }
     }
 }

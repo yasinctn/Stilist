@@ -8,25 +8,32 @@
 import SwiftUI
 
 struct MessageView: View {
+    
     @EnvironmentObject private var navigationViewModel: NavigationViewModel
     @EnvironmentObject private var authViewModel: AuthViewModel
     @EnvironmentObject private var chatViewModel: ChatViewModel
+    @EnvironmentObject private var messageViewModel: MessageViewModel
     
     @State var messageText: String = ""
     @State var chatID: String = ""
     @State var barberName: String = "By Tarık Demirci"
     
+    /*
+    @State private var messages: [Message] = [
+        Message(id: UUID().uuidString, chatId: "1", senderId: "NpqKRtxcdHMWYiP4KsswGyWKHTW2", content: "Hi, good morning 😊", timestamp: Date(), isRead: true),
+        Message(id: UUID().uuidString, chatId: "1", senderId: "NpqKRtxcdHMWYiP4KsswGyWKHTW2", content: "I saw your barber/salon, and I'm very interested in trying it.", timestamp: Date(), isRead: true),
+        Message(id: UUID().uuidString, chatId: "1", senderId: "barber1", content: "Hi, sure.\nYou can come directly to our location according to our working hours", timestamp: Date(), isRead: true),
+        Message(id: UUID().uuidString, chatId: "1", senderId: "barber1", content: "We also have the latest hairstyles, and I highly recommend them to you 😊", timestamp: Date(), isRead: true),
+        Message(id: UUID().uuidString, chatId: "1", senderId: "NpqKRtxcdHMWYiP4KsswGyWKHTW2", content: "omg, this is amazing 👍", timestamp: Date(), isRead: true)
+    ]
+    */
+    
     var body: some View {
         
-        
                 VStack {
-                    
-                    // Messages
-                    let messages = chatViewModel.fetchMessages(chatId: chatID) ?? []
-
                     ScrollView {
                         VStack(spacing: 10) {
-                            ForEach(messages) { message in
+                            ForEach(messageViewModel.messages) { message in
                                 HStack {
                                     MessageBubble(message: message)
                                 }
@@ -34,7 +41,6 @@ struct MessageView: View {
                             }
                         }
                     }
-                    
                     // Message Input
                     HStack {
                         TextField("", text: $messageText)
@@ -45,16 +51,12 @@ struct MessageView: View {
                             .cornerRadius(20)
                             
                         Button(action: {
-                            // Add new message
-                            
                                 if let userID = authViewModel.currentUser?.uid, !messageText.isEmpty {
-                                    let newMessage = Message(chatId: chatID,
-                                                             senderId: userID,
-                                                             content: messageText,
-                                                             timestamp: Date(),
-                                                             isRead: false)
-                                    chatViewModel.sendMessage(message: newMessage)
+                                    
+                                    messageViewModel.sendMessage(senderId: userID, messageText: messageText, chatID: chatID)
+                                    messageViewModel.getMessages(chatID: chatID)
                                 }
+                            messageText = ""
                             
                         }) {
                             Image(systemName: "paperplane")
@@ -67,9 +69,10 @@ struct MessageView: View {
                     }
                     .padding()
                 }
-                .background(Color.white)
                 .navigationTitle(barberName)
-                
+                .onAppear {
+                    messageViewModel.getMessages(chatID: chatID)
+                }
             
         
     }

@@ -13,8 +13,8 @@ import FirebaseFirestore
 protocol ChatServiceProtocol: AnyObject {
     func addChat(_ chat: Chat, completion: @escaping (Result<Void, Error>) -> Void)
     func fetchChats(completion: @escaping (Result<[Chat], Error>) -> Void)
-    func addMessage(_ message: Message, completion: @escaping (Result<Void, Error>) -> Void)
-    func fetchMessages(for chatId: String, completion: @escaping (Result<[Message], Error>) -> Void)
+    func addMessage(_ message: Message, completion: @escaping (Error?) -> Void)
+    func fetchMessages(for chatId: String, completion: @escaping (Error?, [Message]?) -> Void)
 }
 
 final class ChatService: ChatServiceProtocol {
@@ -81,7 +81,7 @@ final class ChatService: ChatServiceProtocol {
         }
     }
     
-    func addMessage(_ message: Message, completion: @escaping (Result<Void, Error>) -> Void) {
+    func addMessage(_ message: Message, completion: @escaping (Error?) -> Void) {
         
         guard let messageID = message.id else {
             fatalError("Message ID must not be nil")
@@ -95,53 +95,86 @@ final class ChatService: ChatServiceProtocol {
             "isRead": message.isRead
         ]
         
-        db.collection("messages").document(messageID).setData(messageData) { error in
+        db.collection("chats").document(message.chatId).collection("messages").document(messageID).setData(messageData) { error in
             if let error = error {
-                completion(.failure(error))
+                completion(error)
             } else {
-                completion(.success(()))
+                completion(nil)
             }
         }
     }
     
-    func fetchMessages(for chatId: String, completion: @escaping (Result<[Message], Error>) -> Void) {
-        db.collection("messages")
-            .whereField("chatId", isEqualTo: chatId)
-            .order(by: "timestamp", descending: false)
-            .getDocuments { snapshot, error in
-                if let error = error {
-                    completion(.failure(error))
-                    return
-                }
-                
-                guard let documents = snapshot?.documents else {
-                    completion(.success([]))
-                    return
-                }
-                
-                let messages = documents.compactMap { doc -> Message? in
-                    let data = doc.data()
-                    
-                    guard
-                        let chatId = data["chatId"] as? String,
-                        let senderId = data["senderId"] as? String,
-                        let content = data["content"] as? String,
-                        let timestamp = (data["timestamp"] as? Timestamp)?.dateValue(),
-                        let isRead = data["isRead"] as? Bool
-                    else { return nil }
-                    
-                    return Message(
-                        id: doc.documentID,
-                        chatId: chatId,
-                        senderId: senderId,
-                        content: content,
-                        timestamp: timestamp,
-                        isRead: isRead
-                    )
-                }
-                
-                completion(.success(messages))
+    func prepareChatPath(for chatId: String, completion: @escaping (Error?) -> Void) {
+        let chatRef = db.collection("chats").document(chatId)
+        
+        // Önce sohbetin var olup olmadığını kontrol edin
+        chatRef.getDocument { snapshot, error in
+            if let error = error {
+                completion(error) // Hata döndür
+                return
             }
+            
+            if snapshot?.exists == false {
+                // Eğer sohbet yoksa, boş bir belge oluştur
+                chatRef.setData([:]) { error in
+                    if let error = error {
+                        completion(error) // Boş belge oluşturulurken hata
+                        return
+                    }
+                    completion(nil) // Başarı
+                }
+            } else {
+                // Sohbet zaten varsa
+                completion(nil)
+            }
+        }
+    }
+
+    func fetchMessages(for chatId: String, completion: @escaping (Error?, [Message]?) -> Void) {
+        prepareChatPath(for: chatId) { error in
+            if let error = error {
+                completion(error, nil)
+                return
+            }
+            
+            let chatRef = self.db.collection("chats").document(chatId).collection("messages")
+            
+            chatRef
+                .order(by: "timestamp", descending: false)
+                .getDocuments { snapshot, error in
+                    if let error = error {
+                        completion(error, nil)
+                        return
+                    }
+                    
+                    guard let documents = snapshot?.documents else {
+                        completion(nil, nil)
+                        return
+                    }
+                    
+                    let messages = documents.compactMap { doc -> Message? in
+                        let data = doc.data()
+                        
+                        guard
+                            let chatId = data["chatId"] as? String,
+                            let senderId = data["senderId"] as? String,
+                            let content = data["content"] as? String,
+                            let timestamp = (data["timestamp"] as? Timestamp)?.dateValue(),
+                            let isRead = data["isRead"] as? Bool
+                        else { return nil }
+                        
+                        return Message(
+                            id: doc.documentID,
+                            chatId: chatId,
+                            senderId: senderId,
+                            content: content,
+                            timestamp: timestamp,
+                            isRead: isRead
+                        )
+                    }
+                    completion(nil, messages)
+                }
+        }
     }
     
 }

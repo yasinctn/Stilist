@@ -23,14 +23,14 @@ struct NearbyCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                 Text(address)
                     .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.secondary)
                 HStack {
                     Text(distance)
                         .font(.footnote)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.secondary)
                     Spacer()
                     HStack(spacing: 4) {
                         Image(systemName: "star.fill")
@@ -38,7 +38,7 @@ struct NearbyCard: View {
                             .foregroundColor(.yellow)
                         Text(rating)
                             .font(.footnote)
-                            .foregroundColor(.white)
+                            .foregroundColor(.primary)
                     }
                 }
             }
