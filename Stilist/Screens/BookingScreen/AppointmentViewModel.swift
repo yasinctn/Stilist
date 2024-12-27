@@ -29,7 +29,6 @@ class AppointmentViewModel: ObservableObject {
     }
     
     func saveAppointment(userId: String) {
-        print("çağırıldı")
         guard !selectedTime.isEmpty, !selectedSpecialistId.isEmpty else {
             return
         }
@@ -38,7 +37,9 @@ class AppointmentViewModel: ObservableObject {
             date: selectedDate,
             time: selectedTime,
             specialistId: selectedSpecialistId,
-            userId: userId
+            userId: userId,
+            status: Status.upcoming
+            
         )
         
         bookingService.saveAppointment(newAppointment) { error in
@@ -50,16 +51,5 @@ class AppointmentViewModel: ObservableObject {
         }
     }
     
-    func fetchAppointments(userId: String) {
-        bookingService.fetchAppointments(for: userId) { result in
-            switch result {
-            case .success(let appointments):
-                DispatchQueue.main.async {
-                    self.appointments = appointments
-                }
-            case .failure(let error):
-                print("Randevular alınamadı: \(error.localizedDescription)")
-            }
-        }
-    }
+    
 }

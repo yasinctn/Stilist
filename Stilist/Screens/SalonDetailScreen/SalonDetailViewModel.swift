@@ -12,6 +12,7 @@ final class SalonDetailViewModel: ObservableObject {
     private var firestoreService: FirestoreServiceProtocol?
     
     @Published var salonDetail: SalonDetail?
+    @Published var chatID: String?
     @Published var reviews: [Review] = []
     @Published var specialists: [Specialist] = []
     @Published var services: [Service] = []

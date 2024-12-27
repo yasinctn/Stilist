@@ -39,7 +39,7 @@ struct TabViewContent: View {
                 }
             MyBookingView()
                 .environmentObject(navigationViewModel)
-                .environmentObject(appointmentViewModel)
+                .environmentObject(BookingsViewModel())
                 .tabItem {
                     Image(systemName: "calendar")
                     Text("My Booking")

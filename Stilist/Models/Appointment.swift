@@ -15,5 +15,6 @@ struct Appointment: Identifiable, Codable {
     var time: String
     var specialistId: String
     var userId: String
+    var status: Status
 }
 

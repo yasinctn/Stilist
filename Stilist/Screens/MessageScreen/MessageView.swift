@@ -14,19 +14,12 @@ struct MessageView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var messageViewModel: MessageViewModel
     
-    @State var messageText: String = ""
-    @State var chatID: String = ""
-    @State var barberName: String = "By Tarık Demirci"
     
-    /*
-    @State private var messages: [Message] = [
-        Message(id: UUID().uuidString, chatId: "1", senderId: "NpqKRtxcdHMWYiP4KsswGyWKHTW2", content: "Hi, good morning 😊", timestamp: Date(), isRead: true),
-        Message(id: UUID().uuidString, chatId: "1", senderId: "NpqKRtxcdHMWYiP4KsswGyWKHTW2", content: "I saw your barber/salon, and I'm very interested in trying it.", timestamp: Date(), isRead: true),
-        Message(id: UUID().uuidString, chatId: "1", senderId: "barber1", content: "Hi, sure.\nYou can come directly to our location according to our working hours", timestamp: Date(), isRead: true),
-        Message(id: UUID().uuidString, chatId: "1", senderId: "barber1", content: "We also have the latest hairstyles, and I highly recommend them to you 😊", timestamp: Date(), isRead: true),
-        Message(id: UUID().uuidString, chatId: "1", senderId: "NpqKRtxcdHMWYiP4KsswGyWKHTW2", content: "omg, this is amazing 👍", timestamp: Date(), isRead: true)
-    ]
-    */
+    @State var messageText: String = ""
+    @State var chatID: String? 
+    @State var receiverID: String?
+    @State var senderID: String?
+    @State var barberName: String?
     
     var body: some View {
         
@@ -51,11 +44,13 @@ struct MessageView: View {
                             .cornerRadius(20)
                             
                         Button(action: {
-                                if let userID = authViewModel.currentUser?.uid, !messageText.isEmpty {
+                            if let senderID, !messageText.isEmpty, let receiverID {
                                     
-                                    messageViewModel.sendMessage(senderId: userID, messageText: messageText, chatID: chatID)
-                                    messageViewModel.getMessages(chatID: chatID)
+                                messageViewModel.sendMessage(senderId: senderID, receiverId: receiverID, messageText: messageText, chatID: chatID)
+                                    
+                                messageViewModel.getMessages(chatID: chatID, participants: [senderID, receiverID])
                                 }
+                            
                             messageText = ""
                             
                         }) {
@@ -69,9 +64,10 @@ struct MessageView: View {
                     }
                     .padding()
                 }
-                .navigationTitle(barberName)
+                .navigationTitle(barberName ?? "loading")
                 .onAppear {
-                    messageViewModel.getMessages(chatID: chatID)
+                    guard let senderID, let receiverID else { return }
+                    messageViewModel.getMessages(chatID: chatID, participants: [senderID, receiverID])
                 }
             
         

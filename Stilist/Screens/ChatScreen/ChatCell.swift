@@ -14,14 +14,14 @@ struct ChatCell: View {
     var body: some View {
         HStack {
             // Profil Resmi
-            Image(chat.profileImageName)
+            Image(systemName: "person")
                 .resizable()
                 .frame(width: 50, height: 50)
                 .clipShape(Circle())
             
             // Sohbet Detayları
             VStack(alignment: .leading, spacing: 4) {
-                Text(chat.name)
+                Text(chat.participants[1] )
                     .font(.headline)
                 Text(chat.lastMessage)
                     .font(.subheadline)
@@ -37,7 +37,7 @@ struct ChatCell: View {
                     .font(.caption)
                     .foregroundColor(.gray)
                 
-                if chat.isUnread {
+                if chat.isUnread{
                     Circle()
                         .frame(width: 10, height: 10)
                         .foregroundColor(.blue)
@@ -49,6 +49,3 @@ struct ChatCell: View {
     
 }
 
-#Preview {
-    ChatCell(chat: Chat(name: "yasin", participants: ["yasin", "ufuk"], lastMessage: "merhaba", lastMessageTimestamp: "12.4", isUnread: true, profileImageName: "deneme"))
-}

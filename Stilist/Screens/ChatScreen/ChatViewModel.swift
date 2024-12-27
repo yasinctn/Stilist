@@ -13,36 +13,28 @@ import SwiftUI
 
 final class ChatViewModel: ObservableObject {
     
+    @Published var chats : [Chat] = []
+    @Published var createdChatID: String?
     private let chatService: ChatServiceProtocol?
-    @EnvironmentObject var authService: AuthService
     
-    init(chatService: ChatServiceProtocol?) {
+    
+    init(chatService: ChatServiceProtocol?, authViewModel: AuthViewModel = .init()) {
         self.chatService = chatService
     }
     
-    func fetchChats() -> [Chat]  {
-        var chats : [Chat] = []
-        chatService?.fetchChats(completion: { result in
-            
-            do {
-                try chats = result.get()
-            } catch {
-                print("chatError")
+    func fetchChats()  {
+        chatService?.fetchChats(forUser: AuthViewModel().currentUser?.uid ?? "", completion: { result in
+            switch result {
+            case.success(let chats):
+                DispatchQueue.main.async {
+                    self.chats = chats
+                }
+            case .failure( let error):
+                print(error.localizedDescription)
             }
         })
-        return chats
     }
     
-    func createChat() {
-    }
     
-    func sendMessage(message: Message?) {
-        
-        if let message {
-            chatService?.addMessage(message, completion: { result in
-                
-                
-            })
-        }
-    }
+    
 }

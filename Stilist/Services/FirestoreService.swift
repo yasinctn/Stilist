@@ -10,22 +10,21 @@ import CoreLocation
 import FirebaseFirestore
 
 protocol FirestoreServiceProtocol: AnyObject {
-    func fetchSalons(completion: @escaping ([Salon]?) -> Void)
+    func fetchSalons(completion: @escaping (Result<[Salon], Error>) -> Void)
     func fetchSalonDetails(salonId: String, completion: @escaping (SalonDetail?) -> Void)
 }
 
 final class FirestoreService {
     private let db = Firestore.firestore()
-    
 }
 
 extension FirestoreService: FirestoreServiceProtocol {
     
-    func fetchSalons(completion: @escaping ([Salon]?) -> Void) {
+    func fetchSalons(completion: @escaping (Result<[Salon], Error>) -> Void) {
         
         db.collection("salons").getDocuments { snapshot, error in
             if let error = error {
-                completion(nil)
+                completion(.failure(error))
                 print("serviste hata: \(error.localizedDescription)")
             } else {
                 
@@ -57,7 +56,7 @@ extension FirestoreService: FirestoreServiceProtocol {
                         imageName: imageName
                     )
                 }
-                completion(salons)
+                completion(.success(salons))
             }
         }
     }

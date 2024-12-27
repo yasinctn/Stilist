@@ -13,6 +13,7 @@ struct Message: Identifiable {
     var id: String? = UUID().uuidString
     var chatId: String
     var senderId: String
+    var receiverId: String
     var content: String
     var timestamp: Date
     var isRead: Bool

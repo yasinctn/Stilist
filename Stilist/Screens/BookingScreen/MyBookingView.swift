@@ -10,33 +10,41 @@ import SwiftUI
 struct MyBookingView: View {
     
     @EnvironmentObject var navigationViewModel: NavigationViewModel
-    @EnvironmentObject var viewModel: AppointmentViewModel
+    @EnvironmentObject var viewModel: BookingsViewModel
     
-    @State private var selectedTab: String = "Upcoming"
+    @State private var selectedTab: String = "Yaklaşan"
     
     var body: some View {
         VStack {
             // Tab Selector
             HStack {
-                BookingTabButton(title: "Upcoming", selectedTab: $selectedTab)
-                BookingTabButton(title: "Completed", selectedTab: $selectedTab)
-                BookingTabButton(title: "Cancelled", selectedTab: $selectedTab)
+                BookingTabButton(title: "Yaklaşan", selectedTab: $selectedTab, action: {
+                    viewModel.fetchBookings(userId: AuthViewModel().currentUser?.uid ?? "", status: .upcoming)
+                })
+                BookingTabButton(title: "Tamamlanan", selectedTab: $selectedTab, action: {
+                    viewModel.fetchBookings(userId: AuthViewModel().currentUser?.uid ?? "", status: .completed)
+                })
+                BookingTabButton(title: "İptal", selectedTab: $selectedTab, action: {
+                    viewModel.fetchBookings(userId: AuthViewModel().currentUser?.uid ?? "", status: .cancelled)
+                })
             }
             .padding(.horizontal)
             
             // Booking List
             ScrollView {
-                if selectedTab == "Upcoming" {
-                    ForEach(upcomingBookings) { booking in
-                        BookingCard(booking: booking, showActions: true)
+                
+                if selectedTab == "Yaklaşan" {
+                    
+                    ForEach(viewModel.upcomingBookings) { booking in
+                        BookingCard(appointment: booking, showActions: true)
                     }
                 } else if selectedTab == "Completed" {
-                    ForEach(completedBookings) { booking in
-                        BookingCard(booking: booking, showActions: false)
+                    ForEach(viewModel.completedBookings) { booking in
+                        BookingCard(appointment: booking, showActions: false)
                     }
                 } else {
-                    ForEach(cancelledBookings) { booking in
-                        BookingCard(booking: booking, showActions: false)
+                    ForEach(viewModel.cancelledBookings) { booking in
+                        BookingCard(appointment: booking, showActions: false)
                     }
                 }
             }
@@ -44,6 +52,7 @@ struct MyBookingView: View {
         }
         .background(Color(UIColor.systemBackground))
         .ignoresSafeArea(edges: .bottom)
+        
     }
 }
 
@@ -51,10 +60,12 @@ struct MyBookingView: View {
 struct BookingTabButton: View {
     var title: String
     @Binding var selectedTab: String
+    var action: () -> Void
     
     var body: some View {
         Button(action: {
             selectedTab = title
+            action()
         }) {
             Text(title)
                 .font(.subheadline)
@@ -68,33 +79,49 @@ struct BookingTabButton: View {
 
 // Booking Card
 struct BookingCard: View {
-    var booking: Booking
+    var appointment: Appointment
     var showActions: Bool
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(booking.date)
+            Text(appointment.date.formatted())
                 .font(.subheadline)
                 .foregroundColor(.primary)
             HStack {
-                Image(booking.imageName)
-                    .resizable()
-                    .frame(width: 60, height: 60)
-                    .cornerRadius(8)
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(booking.barberName)
+                    Text(appointment.specialistId)
                         .font(.headline)
-                    Text(booking.services)
+                    Text(appointment.userId)
                         .font(.subheadline)
                         .foregroundColor(.primary)
                 }
                 Spacer()
-                Text(booking.status)
-                    .font(.footnote)
-                    .foregroundColor(booking.statusColor)
-                    .padding(6)
-                    //.background(booking.statusColor.opacity(0.2))
-                    .cornerRadius(10)
+                
+                switch appointment.status {
+                case .cancelled:
+                    Text(appointment.status.rawValue)
+                        .font(.footnote)
+                        .foregroundColor(.red)
+                        .padding(6)
+                        //.background(booking.statusColor.opacity(0.2))
+                        .cornerRadius(10)
+                case .completed:
+                    Text(appointment.status.rawValue)
+                        .font(.footnote)
+                        .foregroundColor(.green)
+                        .padding(6)
+                        //.background(booking.statusColor.opacity(0.2))
+                        .cornerRadius(10)
+                    Color.green
+                case .upcoming:
+                    Text(appointment.status.rawValue)
+                        .font(.footnote)
+                        .foregroundColor(.orange)
+                        .padding(6)
+                        //.background(booking.statusColor.opacity(0.2))
+                        .cornerRadius(10)
+                }
+                    
             }
             if showActions {
                 HStack {
@@ -113,9 +140,12 @@ struct BookingCard: View {
         .background(Color(UIColor.secondarySystemBackground))
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
+        
     }
+        
 }
 
+//MARK: - DENEME
 // Booking Model
 struct Booking: Identifiable {
     var id = UUID()

@@ -22,7 +22,6 @@ final class ExploreViewModel: ObservableObject {
     
     init(firestoreService: FirestoreServiceProtocol? = FirestoreService()) {
         self.firestoreService = firestoreService
-        getSalons()
     }
     
     func setUserLocation(_ location: CLLocationCoordinate2D) {
@@ -32,16 +31,18 @@ final class ExploreViewModel: ObservableObject {
         }
     }
     
-    private func getSalons() {
-        firestoreService?.fetchSalons { salons in
-            if let salons = salons {
+    func getSalons() {
+        firestoreService?.fetchSalons { result in
+            switch result {
+            case .success(let salons):
                 DispatchQueue.main.async {
                     self.salons = salons
                     print("yenilendi")
                 }
-            } else {
-                print("Salonlar alınamadı")
+            case .failure(let error):
+                print(error.localizedDescription)
             }
+            
         }
     }
     

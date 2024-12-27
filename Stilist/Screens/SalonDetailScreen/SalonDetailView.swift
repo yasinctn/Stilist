@@ -49,7 +49,9 @@ struct SalonDetailView: View {
                     HStack {
                         
                         NavigationLink {
-                            MessageView(chatID: viewModel.salonDetail?.id ?? "")
+                            MessageView(receiverID: viewModel.salonDetail?.id,
+                                        senderID: AuthViewModel().currentUser?.uid, barberName: viewModel.salonDetail?.name
+                             )
                                 .environmentObject(MessageViewModel())
                         } label: {
                             Text("Mesaj")

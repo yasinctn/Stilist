@@ -9,16 +9,17 @@ import Foundation
 import FirebaseFirestore
 
 protocol BookingServiceProtocol {
-    func fetchAppointments(for userId: String, completion: @escaping (Result<[Appointment], Error>) -> Void)
+    func fetchAppointments(for userId: String, status: Status, completion: @escaping (Result<[Appointment], Error>) -> Void)
     func saveAppointment(_ appointment: Appointment, completion: @escaping (Error?) -> Void)
 }
 
 final class BookingService: BookingServiceProtocol {
     private let db = Firestore.firestore()
     
-    func fetchAppointments(for userId: String, completion: @escaping (Result<[Appointment], Error>) -> Void) {
+    func fetchAppointments(for userId: String, status: Status, completion: @escaping (Result<[Appointment], Error>) -> Void) {
         db.collection("appointments")
             .whereField("userId", isEqualTo: userId)
+            .whereField("status", isEqualTo: status.rawValue)
             .order(by: "date", descending: false)
             .getDocuments { snapshot, error in
                 if let error = error {
@@ -40,7 +41,7 @@ final class BookingService: BookingServiceProtocol {
     }
     
     func saveAppointment(_ appointment: Appointment, completion: @escaping (Error?) -> Void) {
-        print("istenildi")
+        
         guard let id = appointment.id else {
             completion(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid Appointment ID"]))
             return

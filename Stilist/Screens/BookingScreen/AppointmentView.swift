@@ -77,7 +77,7 @@ struct AppointmentView: View {
                 
                 Button(action: {
                     let userId = AuthViewModel().currentUser?.uid ?? ""
-                    print("tiklandı")
+                    
                     viewModel.saveAppointment(userId: userId)
                 }) {
                     Text("Continue")

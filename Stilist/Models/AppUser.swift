@@ -10,7 +10,7 @@ import FirebaseFirestore
 
 struct AppUser: Identifiable {
     
-    @DocumentID var id: String?
+    var id: String? = UUID().uuidString
     let name: String
     let email: String
     let phoneNumber: String

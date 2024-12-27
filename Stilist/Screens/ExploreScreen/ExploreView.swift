@@ -20,7 +20,7 @@ struct ExploreView: View {
         NavigationView {
             ZStack {
                 if !viewModel.isSearchEnabled {
-                    if let userLocation = locationManager.userLocation {
+                    if locationManager.userLocation != nil {
                         
                         Map {
                             
@@ -130,6 +130,9 @@ struct ExploreView: View {
                 }
             }
             .navigationBarHidden(true)
+        }
+        .onAppear {
+            viewModel.getSalons()
         }
     }
 }

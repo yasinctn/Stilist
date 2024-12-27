@@ -20,13 +20,15 @@ final class HomeViewModel: ObservableObject {
     
     
     private func getSalons() {
-        firestoreService?.fetchSalons { salons in
-            if let salons = salons {
+        firestoreService?.fetchSalons { result in
+            
+            switch result {
+                case .success(let salons):
                 DispatchQueue.main.async {
                     self.salons = salons
                 }
-            } else {
-                print("Salonlar alınamadı")
+                case .failure(let error):
+                print("Salonlar alınamadı: \(error.localizedDescription)")
             }
         }
     }
