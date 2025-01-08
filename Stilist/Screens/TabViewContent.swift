@@ -16,11 +16,20 @@ struct TabViewContent: View {
     @EnvironmentObject var homeViewModel: HomeViewModel
     @EnvironmentObject var appointmentViewModel: AppointmentViewModel
     
+    
+    @State private var selectedTab: Tab = .home
+    
+    enum Tab {
+        case home, explore, myBooking, inbox, profile
+    }
+    
     var body: some View {
         
-        TabView {
+        
+        TabView (selection: $selectedTab) {
             
-            HomeView()
+            // Home tab
+            HomeView(selectedTab: $selectedTab)
                 .environmentObject(navigationViewModel)
                 .environmentObject(authViewModel)
                 .environmentObject(homeViewModel)
@@ -29,6 +38,8 @@ struct TabViewContent: View {
                     Image(systemName: "house.fill")
                     Text("Home")
                 }
+                .tag(Tab.home)
+            // Explore tab
             ExploreView()
                 .environmentObject(locationManager)
                 .environmentObject(navigationViewModel)
@@ -37,6 +48,9 @@ struct TabViewContent: View {
                     Image(systemName: "safari.fill")
                     Text("Explore")
                 }
+                .tag(Tab.explore)
+            
+            // My Booking tab
             MyBookingView()
                 .environmentObject(navigationViewModel)
                 .environmentObject(BookingsViewModel())
@@ -44,8 +58,10 @@ struct TabViewContent: View {
                     Image(systemName: "calendar")
                     Text("My Booking")
                 }
+                .tag(Tab.myBooking)
             
-            InboxView()
+            // Inbox tab
+            ChatsView()
                 .environmentObject(navigationViewModel)
                 .environmentObject(authViewModel)
                 .environmentObject(chatViewModel)
@@ -53,12 +69,15 @@ struct TabViewContent: View {
                     Image(systemName: "bubble.left.and.bubble.right.fill")
                     Text("Inbox")
                 }
+                .tag(Tab.inbox)
             
+            // Profile tab
             ProfileView()
                 .tabItem {
                     Image(systemName: "person.crop.circle")
                     Text("Profile")
                 }
+                .tag(Tab.profile)
         }
     }
 }

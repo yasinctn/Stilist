@@ -50,7 +50,8 @@ struct SalonDetailView: View {
                         
                         NavigationLink {
                             MessageView(receiverID: viewModel.salonDetail?.id,
-                                        senderID: AuthViewModel().currentUser?.uid, barberName: viewModel.salonDetail?.name
+                                        senderID: AuthViewModel().currentUser?.uid,
+                                        barberName: viewModel.salonDetail?.name
                              )
                                 .environmentObject(MessageViewModel())
                         } label: {

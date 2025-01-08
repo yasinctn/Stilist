@@ -10,11 +10,11 @@ import FirebaseFirestore
 
 struct Chat: Identifiable {
     
-    var id: String? = UUID().uuidString
-    var participants: [String]
-    var lastMessage: String
-    var lastMessageTimestamp: String
-    var isUnread: Bool
+    let id: String?
+    let participants: [String]
+    let lastMessage: String
+    let lastMessageTimestamp: String
+    let isUnread: Bool
     
 }
 

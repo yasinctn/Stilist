@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct NearbyCard: View {
-    var imageName: String
     var title: String
     var address: String
     var distance: String
@@ -16,10 +15,6 @@ struct NearbyCard: View {
     
     var body: some View {
         HStack {
-            Image(imageName)
-                .resizable()
-                .frame(width: 80, height: 80)
-                .cornerRadius(10)
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.headline)

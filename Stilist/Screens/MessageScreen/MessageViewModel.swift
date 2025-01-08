@@ -20,39 +20,45 @@ final class MessageViewModel: ObservableObject {
 
 extension MessageViewModel {
     
-    func getMessages(chatID: String?, participants: [String]) {
-            if let chatID {
-                // Fetch messages directly if chatID is available
-                chatService.fetchMessages(for: chatID) { error, messages in
-                    if let error = error {
-                        print(error.localizedDescription)
-                    } else {
-                        guard let messages else {
-                            return print("No messages")
-                        }
-                        DispatchQueue.main.async {
-                            self.messages = messages
-                        }
+    func getMessages(chatID: String?, participants: [String?]) {
+        // Filter nil values from participants
+        let validParticipants = participants.compactMap { $0 }
+
+        if let chatID = chatID {
+            print(chatID)
+            chatService.fetchMessages(for: chatID) { error, messages in
+                if let error = error {
+                    print("Error fetching messages: \(error.localizedDescription)")
+                } else {
+                    guard let messages = messages else {
+                        print("No messages")
+                        return
                     }
-                }
-            } else {
-                // Check or create chat based on participants
-                chatService.checkOrCreateChat(participants: participants) { result in
-                    switch result {
-                    case .success(let id):
-                        DispatchQueue.main.async {
-                            self.getMessages(chatID: id, participants: participants)
-                        }
-                    case .failure(let error):
-                        print(error.localizedDescription)
+                    DispatchQueue.main.async {
+                        self.messages = messages
                     }
                 }
             }
+        } else {
+            print(validParticipants)
+            chatService.checkOrCreateChat(participants: validParticipants) { result in
+                switch result {
+                case .success(let newChatID):
+                    // Fetch messages for the newly created or existing chat
+                    self.getMessages(chatID: newChatID, participants: validParticipants)
+                case .failure(let error):
+                    print("Error creating or checking chat: \(error.localizedDescription)")
+                }
+            }
         }
-    
-    func sendMessage(senderId: String, receiverId: String, messageText: String, chatID: String?) {
+    }
+
+    func sendMessage(senderId: String?, receiverId: String?, messageText: String, chatID: String?) {
+        guard let senderId, let receiverId else { return }
         if let chatID {
-            let newMessage = Message(chatId: chatID,
+            print(chatID)
+            let newMessage = Message(id: UUID().uuidString,
+                                     chatId: chatID,
                                      senderId: senderId,
                                      receiverId: receiverId,
                                      content: messageText,
@@ -68,6 +74,7 @@ extension MessageViewModel {
                 }
             }
         } else {
+            
             chatService.checkOrCreateChat(participants: [senderId, receiverId]) { result in
                 switch result {
                 case .success(let id):

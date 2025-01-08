@@ -21,6 +21,7 @@ struct HomeView: View {
     @EnvironmentObject var homeViewModel: HomeViewModel
     @EnvironmentObject var locationManager: LocationManager
     
+    @Binding var selectedTab: TabViewContent.Tab
     
     var body: some View {
         NavigationView {
@@ -52,22 +53,22 @@ struct HomeView: View {
                 
                 //Map
                 
-                NavigationLink {
+                Map(initialPosition: .region(MKCoordinateRegion(center: locationManager.userLocation ?? .coffeeShopCoordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)))) {
                     
-                } label: {
-                    Map {
-                        Marker("siz", coordinate: locationManager.userLocation ?? .coffeeShopCoordinate)
-                            .tint(.orange)
+                    Marker("siz", coordinate: locationManager.userLocation ?? .coffeeShopCoordinate)
+                        .tint(.orange)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 15))
+                    .padding()
+                    .frame(height: 200)
+                    .mapControlVisibility(.hidden)
+                    .onTapGesture {
+                        withAnimation(.easeInOut) {
+                            selectedTab = .explore
+                        }
                         
-                    }.clipShape(RoundedRectangle(cornerRadius: 15))
-                        .padding()
-                        .frame(height: 200)
-                        .mapControlVisibility(.hidden)
-                        .onTapGesture {
-                            
 
                     }
-                }
                 
                 
                 // Categories
@@ -106,7 +107,6 @@ struct HomeView: View {
                                             .environmentObject(SalonDetailViewModel())
                                     } label: {
                                         NearbyCard(
-                                            imageName: salon.imageName,
                                             title: salon.name,
                                             address: salon.address,
                                             distance: salon.distance,
@@ -131,7 +131,4 @@ struct HomeView: View {
     }
 }
 
-#Preview {
-    HomeView().environmentObject(LocationManager())
-}
 

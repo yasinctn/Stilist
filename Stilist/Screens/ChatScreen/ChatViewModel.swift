@@ -26,6 +26,7 @@ final class ChatViewModel: ObservableObject {
         chatService?.fetchChats(forUser: AuthViewModel().currentUser?.uid ?? "", completion: { result in
             switch result {
             case.success(let chats):
+                print(chats)
                 DispatchQueue.main.async {
                     self.chats = chats
                 }

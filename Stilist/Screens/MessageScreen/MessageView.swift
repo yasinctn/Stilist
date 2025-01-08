@@ -14,7 +14,7 @@ struct MessageView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var messageViewModel: MessageViewModel
     
-    
+    @State var chat : Chat? 
     @State var messageText: String = ""
     @State var chatID: String? 
     @State var receiverID: String?
@@ -44,15 +44,35 @@ struct MessageView: View {
                             .cornerRadius(20)
                             
                         Button(action: {
-                            if let senderID, !messageText.isEmpty, let receiverID {
-                                    
+                            // Chat ID kontrolü
+                            guard let chatID else {
+                                print("Chat ID yok")
+                                return
+                            }
+                            
+                            // Gönderici ve alıcı bilgisi kontrolü
+                            if senderID == nil || receiverID == nil {
+                                print("Gönderici veya alıcı bilgisi eksik. Sadece chatID ile işlem yapılacak.")
+                                
+                            } else {
+                                print("Gönderici: \(senderID ?? "Yok"), Alıcı: \(receiverID ?? "Yok")")
+                            }
+                            
+                            // Mesaj gönderme işlemi
+                            if !messageText.isEmpty {
                                 messageViewModel.sendMessage(senderId: senderID, receiverId: receiverID, messageText: messageText, chatID: chatID)
-                                    
-                                messageViewModel.getMessages(chatID: chatID, participants: [senderID, receiverID])
+                                
+                                guard let senderID, let receiverID else {
+                                    return
                                 }
+                                messageViewModel.getMessages(chatID: chatID, participants: [senderID, receiverID])
+                                
+                            } else {
+                                print("Mesaj metni boş")
+                            }
                             
+                            // Mesaj metnini sıfırla
                             messageText = ""
-                            
                         }) {
                             Image(systemName: "paperplane")
                                 .font(.title2)
@@ -66,7 +86,11 @@ struct MessageView: View {
                 }
                 .navigationTitle(barberName ?? "loading")
                 .onAppear {
-                    guard let senderID, let receiverID else { return }
+                    if let chat {
+                        senderID = authViewModel.currentUser?.uid
+                        receiverID = chat.participants.first(where: { $0 != senderID })
+                        chatID = chat.id
+                    }
                     messageViewModel.getMessages(chatID: chatID, participants: [senderID, receiverID])
                 }
             

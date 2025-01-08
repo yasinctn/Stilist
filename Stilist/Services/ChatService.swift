@@ -88,53 +88,77 @@ final class ChatService: ChatServiceProtocol {
                         continue
                     }
 
-                    // Fetch the last message from the messages subcollection
-                    self.db.collection("chats")
-                        .document(doc.documentID)
-                        .collection("messages")
-                        .order(by: "timestamp", descending: true)
-                        .limit(to: 1)
-                        .getDocuments { messageSnapshot, messageError in
-                            if let messageError = messageError {
-                                print("Error fetching last message: \(messageError.localizedDescription)")
-                                group.leave()
-                                return
-                            }
-
-                            guard let messageDoc = messageSnapshot?.documents.first else {
-                                print("No messages found for chat: \(doc.documentID)")
-                                group.leave()
-                                return
-                            }
-
-                            let messageData = messageDoc.data()
-                            guard
-                                let content = messageData["content"] as? String,
-                                let timestamp = messageData["timestamp"] as? Timestamp,
-                                let isRead = messageData["isRead"] as? Bool
-                            else {
-                                print("Invalid message data: \(messageData)")
-                                group.leave()
-                                return
-                            }
-
+                    self.fetchLastMessage(for: doc.documentID) { result in
+                        switch result {
+                        case .success(let lastMessage):
                             let chat = Chat(
                                 id: doc.documentID,
                                 participants: participants,
-                                lastMessage: content,
-                                lastMessageTimestamp: timestamp.dateValue().description,
-                                isUnread: !isRead
+                                lastMessage: lastMessage.content,
+                                lastMessageTimestamp: lastMessage.timestamp.description,
+                                isUnread: !lastMessage.isRead
                             )
-
                             chats.append(chat)
-                            group.leave()
+                        case .failure(let error):
+                            print("Error fetching last message: \(error.localizedDescription)")
                         }
+                        group.leave()
+                    }
                 }
 
                 group.notify(queue: .main) {
                     completion(.success(chats))
                 }
             }
+    }
+
+    private func fetchLastMessage(for chatID: String, completion: @escaping (Result<Message, Error>) -> Void) {
+        db.collection("chats").document(chatID).collection("messages")
+            .order(by: "timestamp", descending: true)
+            .limit(to: 1)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+
+                guard let document = snapshot?.documents.first else {
+                    completion(.failure(NSError(domain: "ChatService", code: 404, userInfo: [NSLocalizedDescriptionKey: "No messages found"])))
+                    return
+                }
+
+                if let message = self.parseMessage(from: document) {
+                    completion(.success(message))
+                } else {
+                    completion(.failure(NSError(domain: "ChatService", code: 500, userInfo: [NSLocalizedDescriptionKey: "Invalid message data"])))
+                }
+            }
+    }
+
+    private func parseMessage(from document: QueryDocumentSnapshot) -> Message? {
+        let data = document.data()
+
+        guard
+            let chatId = data["chatId"] as? String,
+            let senderId = data["senderId"] as? String,
+            let receiverId = data["receiverId"] as? String,
+            let content = data["content"] as? String,
+            let timestamp = (data["timestamp"] as? Timestamp)?.dateValue(),
+            let isRead = data["isRead"] as? Bool
+        else {
+            print("Invalid message data: \(data)")
+            return nil
+        }
+
+        return Message(
+            id: document.documentID,
+            chatId: chatId,
+            senderId: senderId,
+            receiverId: receiverId,
+            content: content,
+            timestamp: timestamp,
+            isRead: isRead
+        )
     }
 
     
