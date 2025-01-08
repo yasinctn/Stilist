@@ -18,3 +18,7 @@ enum Status: String, Codable {
     case completed = "completed"
     case cancelled = "cancelled"
 }
+
+enum Tab {
+    case home, explore, myBooking, inbox, profile
+}

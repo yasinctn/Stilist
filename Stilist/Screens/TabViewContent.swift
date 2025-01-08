@@ -17,11 +17,8 @@ struct TabViewContent: View {
     @EnvironmentObject var appointmentViewModel: AppointmentViewModel
     
     
-    @State private var selectedTab: Tab = .home
+    @State var selectedTab: Tab = .home
     
-    enum Tab {
-        case home, explore, myBooking, inbox, profile
-    }
     
     var body: some View {
         

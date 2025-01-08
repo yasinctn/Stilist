@@ -16,40 +16,15 @@ protocol AuthServiceProtocol: AnyObject {
 }
 
 final class AuthService: ObservableObject {
-    @Published var currentUser : User?
+    @Published var currentUser : AppUser?
     private let db = Firestore.firestore()
     
-    init() {
-        self.currentUser = Auth.auth().currentUser
-        
-    }
     
-    
-    private func writeUserData(_ user: AppUser, completion: @escaping (Error?) -> Void) {
-        let collectionPath = user.userRole.rawValue
-        guard let userID = user.id else { return }
-        let userData: [String: Any] = [
-            "id" : userID,
-            "name" : user.name,
-            "email" : user.email,
-            "phoneNumber" : user.phoneNumber,
-            "userRole" : user.userRole.rawValue
-            
-        ]
-        
-        db.collection(collectionPath).document(userID).setData(userData) { error in
-            if let error = error {
-                completion(error)
-            } else {
-                completion(nil)
-            }
-        }
-        
-    }
 }
 
 
 extension AuthService: AuthServiceProtocol {
+    
     func createUser(name: String, email: String, phoneNumber: String, password: String, role: UserRole, completion: @escaping ((any Error)?) -> Void) {
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in
             guard let self else { return }
@@ -76,7 +51,7 @@ extension AuthService: AuthServiceProtocol {
                 } else {
                     completion(nil)
                 }
-                self.currentUser = Auth.auth().currentUser
+                self.currentUser = newUser
                 completion(nil)
                 print("User created successfully")
             }
@@ -90,7 +65,9 @@ extension AuthService: AuthServiceProtocol {
                 completion(error)
                 print("Error signing in: \(error.localizedDescription)")
             } else {
-                self.currentUser = Auth.auth().currentUser
+                getUserData(id: Auth.auth().currentUser?.uid) { appUser in
+                    self.currentUser = appUser
+                }
                 completion(nil)
                 print("User signed in successfully")
             }
@@ -109,4 +86,63 @@ extension AuthService: AuthServiceProtocol {
     }
     
     
+}
+extension AuthService {
+    
+    private func getUserData(id: String?, completion: @escaping (AppUser?) -> Void) {
+        
+        guard let id else {
+            print("Kullanıcı id'si yok.")
+            completion(nil)
+            return
+        }
+        
+        db.collection("users").whereField("id", isEqualTo: id).getDocuments { snapshot, error in
+            if let error = error {
+                print("Serviste hata: \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+            
+            guard let snapshot = snapshot, !snapshot.documents.isEmpty else {
+                print("Kullanıcı bulunamadı.")
+                completion(nil)
+                return
+            }
+            
+            // İlk dökümanı al ve AppUser'a dönüştür
+            let document = snapshot.documents.first
+            
+            do {
+                let appUser = try document?.data(as: AppUser.self)
+                completion(appUser)
+            } catch {
+                print("Veri dönüştürme hatası: \(error)")
+                completion(nil)
+            }
+        }
+    }
+    
+    private func writeUserData(_ user: AppUser, completion: @escaping (Error?) -> Void) {
+        
+        let collectionPath = "users"
+        
+        let userData: [String: Any] = [
+            "id" : user.id,
+            "name" : user.name,
+            "email" : user.email,
+            "phoneNumber" : user.phoneNumber,
+            "userRole" : user.userRole.rawValue
+            
+        ]
+        
+        db.collection(collectionPath).document(user.id).setData(userData) { error in
+            if let error = error {
+                completion(error)
+            } else {
+                completion(nil)
+            }
+        }
+        
+    }
 }

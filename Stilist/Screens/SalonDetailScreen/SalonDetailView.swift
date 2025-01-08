@@ -11,6 +11,7 @@ import MapKit
 struct SalonDetailView: View {
     
     @EnvironmentObject private var viewModel: SalonDetailViewModel
+    @EnvironmentObject private var authViewModel: AuthViewModel
     
     @State var selectedSalonId: String?
     @State private var selectedTab: String = "Hakkımızda"
@@ -50,10 +51,12 @@ struct SalonDetailView: View {
                         
                         NavigationLink {
                             MessageView(receiverID: viewModel.salonDetail?.id,
-                                        senderID: AuthViewModel().currentUser?.uid,
+                                        senderID: authViewModel.currentUser?.id,
                                         barberName: viewModel.salonDetail?.name
                              )
-                                .environmentObject(MessageViewModel())
+                            .environmentObject(ChatViewModel())
+                            .environmentObject(authViewModel)
+                            .environmentObject(MessageViewModel())
                         } label: {
                             Text("Mesaj")
                                 .padding(7)
@@ -66,7 +69,7 @@ struct SalonDetailView: View {
                         NavigationLink {
                             AppointmentView()
                                 .environmentObject(AppointmentViewModel())
-                                .environmentObject(AuthViewModel())
+                                .environmentObject(authViewModel)
                         } label: {
                             Text("Randevu al")
                                 .padding(7)

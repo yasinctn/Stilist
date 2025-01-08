@@ -76,7 +76,7 @@ struct AppointmentView: View {
                 }
                 
                 Button(action: {
-                    let userId = AuthViewModel().currentUser?.uid ?? ""
+                    guard let userId = AuthViewModel().currentUser?.id else { return }
                     
                     viewModel.saveAppointment(userId: userId)
                 }) {

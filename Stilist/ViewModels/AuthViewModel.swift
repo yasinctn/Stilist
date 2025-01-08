@@ -11,14 +11,27 @@ import FirebaseAuth
 final class AuthViewModel: ObservableObject {
     
     private var authService: AuthServiceProtocol?
+    private var dbService: FirestoreServiceProtocol?
     
-    @Published var currentUser: User?
+    @Published var currentUser: AppUser?
     @Published var isSignedIn: Bool = false
     
-    init(authService: AuthService? = AuthService()) {
+    init(authService: AuthService? = AuthService(), dbService: FirestoreService? = FirestoreService()) {
+        self.dbService = dbService
         self.authService = AuthService()
-        currentUser = Auth.auth().currentUser
-        isSignedIn = currentUser != nil
+        self.setCurrentUser()
+    }
+    
+    func setCurrentUser() {
+        
+        dbService?.getUserData(id: Auth.auth().currentUser?.uid, completion: { currentUser in
+        
+            guard let currentUser else { return }
+            
+            self.currentUser = currentUser
+            
+            
+        })
     }
     
     // Kullanıcı Oluşturma
@@ -29,7 +42,7 @@ final class AuthViewModel: ObservableObject {
                 print(error.localizedDescription)
                 completion(error)
             }else {
-                self.currentUser = Auth.auth().currentUser
+                setCurrentUser()
                 self.isSignedIn = true
                 completion(nil)
             }
@@ -44,7 +57,7 @@ final class AuthViewModel: ObservableObject {
                 print(error.localizedDescription)
                 completion(error)
             }else {
-                self.currentUser = Auth.auth().currentUser
+                setCurrentUser()
                 self.isSignedIn = true
                 completion(nil)
             }

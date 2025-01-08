@@ -19,13 +19,13 @@ struct MyBookingView: View {
             // Tab Selector
             HStack {
                 BookingTabButton(title: "Yaklaşan", selectedTab: $selectedTab, action: {
-                    viewModel.fetchBookings(userId: AuthViewModel().currentUser?.uid ?? "", status: .upcoming)
+                    viewModel.fetchBookings(userId: AuthViewModel().currentUser?.id ?? "", status: .upcoming)
                 })
                 BookingTabButton(title: "Tamamlanan", selectedTab: $selectedTab, action: {
-                    viewModel.fetchBookings(userId: AuthViewModel().currentUser?.uid ?? "", status: .completed)
+                    viewModel.fetchBookings(userId: AuthViewModel().currentUser?.id ?? "", status: .completed)
                 })
                 BookingTabButton(title: "İptal", selectedTab: $selectedTab, action: {
-                    viewModel.fetchBookings(userId: AuthViewModel().currentUser?.uid ?? "", status: .cancelled)
+                    viewModel.fetchBookings(userId: AuthViewModel().currentUser?.id ?? "", status: .cancelled)
                 })
             }
             .padding(.horizontal)

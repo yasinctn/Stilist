@@ -13,7 +13,7 @@ struct MessageBubble: View {
     
     var message: Message
     var isCurrentUser: Bool {
-        message.senderId == authViewModel.currentUser?.uid
+        message.senderId == authViewModel.currentUser?.id
     }
     
     var body: some View {

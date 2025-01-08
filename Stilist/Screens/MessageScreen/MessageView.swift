@@ -44,15 +44,12 @@ struct MessageView: View {
                             .cornerRadius(20)
                             
                         Button(action: {
-                            // Chat ID kontrolü
-                            guard let chatID else {
-                                print("Chat ID yok")
-                                return
-                            }
+                            
                             
                             // Gönderici ve alıcı bilgisi kontrolü
                             if senderID == nil || receiverID == nil {
                                 print("Gönderici veya alıcı bilgisi eksik. Sadece chatID ile işlem yapılacak.")
+                                
                                 
                             } else {
                                 print("Gönderici: \(senderID ?? "Yok"), Alıcı: \(receiverID ?? "Yok")")
@@ -87,7 +84,7 @@ struct MessageView: View {
                 .navigationTitle(barberName ?? "loading")
                 .onAppear {
                     if let chat {
-                        senderID = authViewModel.currentUser?.uid
+                        senderID = authViewModel.currentUser?.id
                         receiverID = chat.participants.first(where: { $0 != senderID })
                         chatID = chat.id
                     }

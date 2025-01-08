@@ -18,12 +18,13 @@ final class ChatViewModel: ObservableObject {
     private let chatService: ChatServiceProtocol?
     
     
-    init(chatService: ChatServiceProtocol?, authViewModel: AuthViewModel = .init()) {
+    init(chatService: ChatServiceProtocol? = ChatService(), authViewModel: AuthViewModel = .init()) {
         self.chatService = chatService
     }
     
-    func fetchChats()  {
-        chatService?.fetchChats(forUser: AuthViewModel().currentUser?.uid ?? "", completion: { result in
+    func fetchChats(_ id: String?)  {
+        guard let id else { return }
+        chatService?.fetchChats(forUser: id, completion: { result in
             switch result {
             case.success(let chats):
                 print(chats)

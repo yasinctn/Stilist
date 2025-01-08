@@ -78,7 +78,7 @@ struct ChatsView: View {
                 .navigationBarHidden(true)
             }
             .onAppear {
-                chatViewModel.fetchChats()
+                chatViewModel.fetchChats(authViewModel.currentUser?.id)
             }
         
         

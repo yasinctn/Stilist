@@ -25,7 +25,7 @@ struct ProfileView: View {
                             .frame(width: 80, height: 80)
                             .clipShape(Circle())
                         
-                        Text(authViewModel.currentUser?.displayName ?? "Loading...")
+                        Text(authViewModel.currentUser?.name ?? "Loading...")
                             .font(.title2)
                             .fontWeight(.bold)
                         

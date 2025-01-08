@@ -21,7 +21,7 @@ struct HomeView: View {
     @EnvironmentObject var homeViewModel: HomeViewModel
     @EnvironmentObject var locationManager: LocationManager
     
-    @Binding var selectedTab: TabViewContent.Tab
+    @Binding var selectedTab: Tab
     
     var body: some View {
         NavigationView {
@@ -37,7 +37,7 @@ struct HomeView: View {
                 
                 
                 // Greeting
-                Text("Merhaba \(authViewModel.currentUser?.displayName ?? "loading...")")
+                Text("Merhaba \(authViewModel.currentUser?.name ?? "opsiyonel")")
                     .font(.title)
                     .fontWeight(.semibold)
                     .padding()
@@ -105,6 +105,7 @@ struct HomeView: View {
                                     NavigationLink {
                                         SalonDetailView(selectedSalonId: salon.id)
                                             .environmentObject(SalonDetailViewModel())
+                                            .environmentObject(authViewModel)
                                     } label: {
                                         NearbyCard(
                                             title: salon.name,

@@ -8,13 +8,12 @@
 import Foundation
 import FirebaseFirestore
 
-struct AppUser: Identifiable {
+struct AppUser: Identifiable, Decodable {
     
-    var id: String? = UUID().uuidString
+    var id: String
     let name: String
     let email: String
     let phoneNumber: String
-    let profileImageURL: String = ""
     let userRole: UserRole
 }
  
