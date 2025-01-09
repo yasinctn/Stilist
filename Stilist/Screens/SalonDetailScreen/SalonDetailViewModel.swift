@@ -22,15 +22,24 @@ final class SalonDetailViewModel: ObservableObject {
     }
     
     func getSalonDetail(for salonId: String?) {
-        guard let salonId else { return }
-        firestoreService?.fetchSalonDetails(salonId: salonId, completion: { salonDetail in
-            if let salonDetail {
-                self.salonDetail = salonDetail
-                self.reviews = salonDetail.reviews ?? []
-                self.specialists = salonDetail.specialists ?? []
-                self.services = salonDetail.services ?? []
-            }
-        })
+        if let salonId {
+            firestoreService?.fetchSalonDetails(salonId: salonId, completion: { salonDetail in
+                DispatchQueue.main.async {
+                    if let salonDetail {
+                        self.salonDetail = salonDetail
+                        self.reviews = salonDetail.reviews ?? []
+                        self.specialists = salonDetail.specialists ?? []
+                        self.services = salonDetail.services ?? []
+                    }else {
+                        print("salon hatası")
+                    }
+                }
+                
+            })
+        }else {
+            print("id yok")
+        }
+        
     }
     
 }

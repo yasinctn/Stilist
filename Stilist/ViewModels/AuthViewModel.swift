@@ -20,6 +20,7 @@ final class AuthViewModel: ObservableObject {
         self.dbService = dbService
         self.authService = AuthService()
         self.setCurrentUser()
+        self.isSignedIn = Auth.auth().currentUser != nil
     }
     
     func setCurrentUser() {
@@ -35,8 +36,8 @@ final class AuthViewModel: ObservableObject {
     }
     
     // Kullanıcı Oluşturma
-    func createUser(name: String, email: String, phoneNumber: String, password: String, role: UserRole, completion: @escaping (Error?) -> Void) {
-        authService?.createUser(name: name, email: email, phoneNumber: phoneNumber, password: password, role: role, completion: { [ weak self ] error in
+    func createUser(name: String, surname: String, email: String, phoneNumber: String, password: String, role: UserRole, completion: @escaping (Error?) -> Void) {
+        authService?.createUser(name: name, surname: surname, email: email, phoneNumber: phoneNumber, password: password, role: role, completion: { [ weak self ] error in
             guard let self else { return }
             if let error = error {
                 print(error.localizedDescription)

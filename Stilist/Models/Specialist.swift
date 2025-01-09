@@ -10,11 +10,11 @@ import FirebaseFirestore
 
 
 struct Specialist: Identifiable, Codable {
-    var id: UUID?
-    var name: String?
-    var expertise: String?
-    var imageName: String?
-    var unavailability: [Unavailability]?
+    let id: String?
+    let name: String?
+    let expertise: String?
+    let imageName: String?
+    let unavailability: [Unavailability]?
 }
 
 struct Unavailability: Identifiable, Codable {

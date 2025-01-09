@@ -15,7 +15,8 @@ struct TabViewContent: View {
     @EnvironmentObject var chatViewModel: ChatViewModel
     @EnvironmentObject var homeViewModel: HomeViewModel
     @EnvironmentObject var appointmentViewModel: AppointmentViewModel
-    
+    @EnvironmentObject var salonDetailViewModel: SalonDetailViewModel
+    @EnvironmentObject var exploreViewModel: ExploreViewModel
     
     @State var selectedTab: Tab = .home
     
@@ -31,6 +32,7 @@ struct TabViewContent: View {
                 .environmentObject(authViewModel)
                 .environmentObject(homeViewModel)
                 .environmentObject(locationManager)
+                .environmentObject(salonDetailViewModel)
                 .tabItem {
                     Image(systemName: "house.fill")
                     Text("Home")
@@ -40,7 +42,7 @@ struct TabViewContent: View {
             ExploreView()
                 .environmentObject(locationManager)
                 .environmentObject(navigationViewModel)
-                .environmentObject(ExploreViewModel())
+                .environmentObject(exploreViewModel)
                 .tabItem {
                     Image(systemName: "safari.fill")
                     Text("Explore")

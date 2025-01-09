@@ -147,7 +147,3 @@ struct SalonDetailView: View {
     }
 }
 
-#Preview {
-    SalonDetailView()
-        .environmentObject(ExploreViewModel())
-}

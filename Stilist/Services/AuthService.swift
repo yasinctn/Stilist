@@ -10,29 +10,33 @@ import FirebaseFirestore
 import FirebaseAuth
 
 protocol AuthServiceProtocol: AnyObject {
-    func createUser(name: String, email: String, phoneNumber: String, password: String, role: UserRole, completion: @escaping (Error?) -> Void)
+    func createUser(name: String, surname: String, email: String, phoneNumber: String, password: String, role: UserRole, completion: @escaping (Error?) -> Void)
     func signIn(email: String, password: String, completion: @escaping (Error?) -> Void)
     func signOut(completion: @escaping (Error?) -> Void)
 }
 
 final class AuthService: ObservableObject {
+    
+    @Published var user: User?
     @Published var currentUser : AppUser?
     private let db = Firestore.firestore()
     
-    
+    init() {
+        self.user = Auth.auth().currentUser
+    }
 }
 
 
 extension AuthService: AuthServiceProtocol {
     
-    func createUser(name: String, email: String, phoneNumber: String, password: String, role: UserRole, completion: @escaping ((any Error)?) -> Void) {
+    func createUser(name: String,surname: String, email: String, phoneNumber: String, password: String, role: UserRole, completion: @escaping ((any Error)?) -> Void) {
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in
             guard let self else { return }
             if let error = error {
                 completion(error)
                 print("Error creating user: \(error.localizedDescription)")
             } else {
-                let newUser = AppUser(id: result!.user.uid, name: name, email: email, phoneNumber: phoneNumber, userRole: role)
+                let newUser = AppUser(id: result!.user.uid, name: name, surname: surname, email: email, phoneNumber: phoneNumber, userRole: role)
                 writeUserData(newUser) { error in
                     if let error = error {
                         completion(error)
@@ -130,6 +134,7 @@ extension AuthService {
         let userData: [String: Any] = [
             "id" : user.id,
             "name" : user.name,
+            "surname" : user.surname,
             "email" : user.email,
             "phoneNumber" : user.phoneNumber,
             "userRole" : user.userRole.rawValue
@@ -144,5 +149,28 @@ extension AuthService {
             }
         }
         
+    }
+    
+    private func addSpecialistToSalon(_ user: AppUser, completion: @escaping (Error?) -> Void) {
+        
+        let collectionPath = "users"
+        
+        let userData: [String: Any] = [
+            "id" : user.id,
+            "name" : user.name,
+            "surname" : user.surname,
+            "email" : user.email,
+            "phoneNumber" : user.phoneNumber,
+            "userRole" : user.userRole.rawValue
+            
+        ]
+        
+        db.collection(collectionPath).document(user.id).setData(userData) { error in
+            if let error = error {
+                completion(error)
+            } else {
+                completion(nil)
+            }
+        }
     }
 }

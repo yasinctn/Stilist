@@ -63,7 +63,7 @@ struct CreateSaloonAccountView: View {
                         
                         locationManager.convertAddress(address: address)
                         
-                        authViewModel.createUser(name: userName, email: email, phoneNumber: phoneNumber, password: password, role: .admin) { error in
+                        authViewModel.createUser(name: userName, surname: userName, email: email, phoneNumber: phoneNumber, password: password, role: .admin) { error in
                             if let error {
                                 
                                     

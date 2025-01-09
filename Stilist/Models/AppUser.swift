@@ -9,9 +9,9 @@ import Foundation
 import FirebaseFirestore
 
 struct AppUser: Identifiable, Decodable {
-    
-    var id: String
+    let id: String
     let name: String
+    let surname: String
     let email: String
     let phoneNumber: String
     let userRole: UserRole

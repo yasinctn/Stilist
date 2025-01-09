@@ -15,9 +15,11 @@ struct CreateSpecialistAccountView: View {
     @State private var showAlert: Bool = false
     
     @State private var name = ""
+    @State private var surname = ""
     @State private var email = ""
     @State private var phoneNumber = ""
     @State private var password = ""
+    @State private var salonCode = ""
     
     @State private var errorMessage: String?
     
@@ -55,7 +57,12 @@ struct CreateSpecialistAccountView: View {
                 
                 // Form Fields
                 VStack(spacing: 15) {
-                    TextField("Ad Soyad", text: $name)
+                    TextField("Ad", text: $name)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                    
+                    TextField("Soyad", text: $name)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
@@ -68,6 +75,12 @@ struct CreateSpecialistAccountView: View {
                     
                     
                     TextField("Telefon", text: $phoneNumber)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                        .keyboardType(.numberPad)
+                    
+                    TextField("Salon Kodu", text: $salonCode)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
@@ -87,13 +100,15 @@ struct CreateSpecialistAccountView: View {
                 
                 // Continue Button
                 Button(action: {
-                    authViewModel.createUser(name: name, email: email, phoneNumber: phoneNumber, password: password, role: .specialist) { error in
+                    authViewModel.createUser(name: name, surname: surname, email: email, phoneNumber: phoneNumber, password: password, role: .specialist) { error in
                         if let error = error {
                             errorMessage = error.localizedDescription
                             showAlert = true
                             print(error.localizedDescription)
                             
                         
+                        }else {
+                            
                         }
                     }
                     

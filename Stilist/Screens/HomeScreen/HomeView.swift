@@ -20,6 +20,7 @@ struct HomeView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var homeViewModel: HomeViewModel
     @EnvironmentObject var locationManager: LocationManager
+    @EnvironmentObject var salonDetailViewModel: SalonDetailViewModel
     
     @Binding var selectedTab: Tab
     
@@ -104,7 +105,7 @@ struct HomeView: View {
                                 ForEach(homeViewModel.salons) { salon in
                                     NavigationLink {
                                         SalonDetailView(selectedSalonId: salon.id)
-                                            .environmentObject(SalonDetailViewModel())
+                                            .environmentObject(salonDetailViewModel)
                                             .environmentObject(authViewModel)
                                     } label: {
                                         NearbyCard(

@@ -15,6 +15,7 @@ struct CreateAccountView: View {
     @State private var showAlert: Bool = false
     
     @State private var name = ""
+    @State private var surname = ""
     @State private var email = ""
     @State private var phoneNumber = ""
     @State private var password = ""
@@ -55,7 +56,12 @@ struct CreateAccountView: View {
                 
                 // Form Fields
                 VStack(spacing: 15) {
-                    TextField("Ad Soyad", text: $name)
+                    TextField("Ad", text: $name)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                    
+                    TextField("Soyad", text: $surname)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
@@ -82,7 +88,7 @@ struct CreateAccountView: View {
                 .padding(.horizontal, 30)
                     // Continue Button
                     Button(action: {
-                        authViewModel.createUser(name: name, email: email, phoneNumber: phoneNumber, password: password, role: .customer) { error in
+                        authViewModel.createUser(name: name, surname: surname, email: email, phoneNumber: phoneNumber, password: password, role: .customer) { error in
                             if let error = error {
                                 errorMessage = error.localizedDescription
                                 showAlert = true
