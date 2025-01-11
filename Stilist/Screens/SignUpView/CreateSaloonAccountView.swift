@@ -66,7 +66,7 @@ struct CreateSaloonAccountView: View {
                         authViewModel.createUser(name: userName, surname: userName, email: email, phoneNumber: phoneNumber, password: password, role: .admin) { error in
                             if let error {
                                 
-                                    
+                                print(error.localizedDescription)
                             }
                         }
                         

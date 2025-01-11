@@ -50,6 +50,17 @@ final class AuthViewModel: ObservableObject {
         })
     }
     
+    func saveSpecialistToSalon(name: String, surname: String, email: String, phoneNumber: String, role: UserRole, salonID: String, completion: @escaping (Error?) -> Void) {
+        let specialist = Specialist(id: UUID().uuidString, name: name, surname: surname, email: email, phoneNumber: phoneNumber, salonId: salonID)
+        authService?.addSpecialistToSalon(specialist: specialist, completion: { error in
+            if let error {
+                print("uzman kaydedilemedi " + error.localizedDescription)
+            }else {
+                print("uzman kaydedildi")
+            }
+        })
+    }
+    
     // Oturum Açma
     func signIn(email: String, password: String, completion: @escaping (Error?) -> Void) {
         authService?.signIn(email: email, password: password, completion: { [weak self] error in

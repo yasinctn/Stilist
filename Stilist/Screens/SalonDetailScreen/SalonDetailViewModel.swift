@@ -42,4 +42,27 @@ final class SalonDetailViewModel: ObservableObject {
         
     }
     
+    func getSpecialists(for salonId: String?) {
+        if let salonId {
+            firestoreService?.fetchSpecialists(salonId: salonId, completion: { error, specialistList in
+                if let error {
+                    print("uzmanlar alınamadı" + error.localizedDescription)
+                }else {
+                    if let specialistList {
+                        DispatchQueue.main.async {
+                            self.specialists = specialistList
+                        }
+                        print(specialistList)
+                    }else {
+                        print("uzmanlar boş geldi")
+                    }
+                    
+                }
+            })
+        }else {
+            print("id yok")
+        }
+        
+    }
+    
 }

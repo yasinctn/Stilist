@@ -62,7 +62,7 @@ struct CreateSpecialistAccountView: View {
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
                     
-                    TextField("Soyad", text: $name)
+                    TextField("Soyad", text: $surname)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
@@ -84,13 +84,14 @@ struct CreateSpecialistAccountView: View {
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
-                        .keyboardType(.numberPad)
+                        .keyboardType(.default)
                     
                     TextField("Parola", text: $password)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
-                        .keyboardType(.numberPad)
+                        .keyboardType(.default)
+                        
                     
                    
                     
@@ -108,7 +109,13 @@ struct CreateSpecialistAccountView: View {
                             
                         
                         }else {
-                            
+                            authViewModel.saveSpecialistToSalon(name: name, surname: surname, email: email, phoneNumber: phoneNumber, role: .specialist, salonID: salonCode) { error in
+                                    if let error {
+                                        errorMessage = error.localizedDescription
+                                        showAlert = true
+                                        print(error.localizedDescription)
+                                    }
+                            }
                         }
                     }
                     

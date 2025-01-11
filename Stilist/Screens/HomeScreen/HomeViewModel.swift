@@ -10,12 +10,13 @@ import CoreLocation
 import FirebaseFirestore
 
 final class HomeViewModel: ObservableObject {
+    
     private let firestoreService: FirestoreServiceProtocol?
     @Published var salons: [Salon] = []
     
     init(firestoreService: FirestoreServiceProtocol? = FirestoreService()) {
         self.firestoreService = firestoreService
-        getSalons() 
+        getSalons()
     }
     
     

@@ -11,6 +11,7 @@ import FirebaseAuth
 
 protocol AuthServiceProtocol: AnyObject {
     func createUser(name: String, surname: String, email: String, phoneNumber: String, password: String, role: UserRole, completion: @escaping (Error?) -> Void)
+    func addSpecialistToSalon(specialist: Specialist?, completion: @escaping (Error?) -> Void)
     func signIn(email: String, password: String, completion: @escaping (Error?) -> Void)
     func signOut(completion: @escaping (Error?) -> Void)
 }
@@ -151,21 +152,23 @@ extension AuthService {
         
     }
     
-    private func addSpecialistToSalon(_ user: AppUser, completion: @escaping (Error?) -> Void) {
+    func addSpecialistToSalon(specialist: Specialist?, completion: @escaping (Error?) -> Void) {
         
-        let collectionPath = "users"
+        guard let specialist else {
+            return
+        }
         
-        let userData: [String: Any] = [
-            "id" : user.id,
-            "name" : user.name,
-            "surname" : user.surname,
-            "email" : user.email,
-            "phoneNumber" : user.phoneNumber,
-            "userRole" : user.userRole.rawValue
+        let specialistData: [String: Any] = [
+            "id" : specialist.id,
+            "name" : specialist.name,
+            "surname" : specialist.surname,
+            "email" : specialist.email,
+            "phoneNumber" : specialist.phoneNumber,
+            "salonId" : specialist.salonId
             
         ]
         
-        db.collection(collectionPath).document(user.id).setData(userData) { error in
+        db.collection("salons").document(specialist.salonId).collection("specialists").document(specialist.id) .setData(specialistData) { error in
             if let error = error {
                 completion(error)
             } else {

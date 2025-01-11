@@ -23,7 +23,9 @@ struct ContentView: View {
         
         
         if authViewModel.isSignedIn {
+            
             if authViewModel.currentUser?.userRole == .customer {
+                
                 TabViewContent()
                     .environmentObject(locationManager)
                     .environmentObject(appointmentViewModel)
@@ -36,6 +38,20 @@ struct ContentView: View {
                     .animation(.easeInOut, value: authViewModel.isSignedIn)
                     .transition(.slide)
             }
+            else if authViewModel.currentUser?.userRole == .specialist {
+                TabViewContent()
+                    .environmentObject(locationManager)
+                    .environmentObject(appointmentViewModel)
+                    .environmentObject(navigationViewModel)
+                    .environmentObject(authViewModel)
+                    .environmentObject(chatViewModel)
+                    .environmentObject(homeViewModel)
+                    .environmentObject(salonDetailViewModel)
+                    .environmentObject(exploreViewModel)
+                    .animation(.easeInOut, value: authViewModel.isSignedIn)
+                    .transition(.slide)
+            }
+            
 
         } else {
             

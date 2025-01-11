@@ -13,6 +13,7 @@ protocol FirestoreServiceProtocol: AnyObject {
     func fetchSalons(completion: @escaping (Result<[Salon], Error>) -> Void)
     func fetchSalonDetails(salonId: String, completion: @escaping (SalonDetail?) -> Void)
     func getUserData(id: String?, completion: @escaping (AppUser?) -> Void)
+    func fetchSpecialists(salonId: String, completion: @escaping (Error?, [Specialist]?) -> Void)
 }
 
 final class FirestoreService {
@@ -93,6 +94,39 @@ extension FirestoreService: FirestoreServiceProtocol {
                 }
                 completion(.success(salons))
             }
+        }
+    }
+    
+    func fetchSpecialists(salonId: String, completion: @escaping (Error?, [Specialist]?) -> Void) {
+        
+        self.db.collection("salons").document(salonId).collection("specialists").getDocuments { snapshot, error in
+            
+            if let error = error {
+                print("Error fetching specialists: \(error.localizedDescription)")
+                completion(error,nil)
+            }else {
+                guard let documents = snapshot?.documents else {
+                    print("No documents found.")
+                    completion(error, nil)
+                    return
+                }
+                
+                let specialists = documents.compactMap { doc -> Specialist? in
+                    let data = doc.data()
+                    
+                    // Specialist modeline uygun özellikleri alın.
+                    do {
+                        let specialist = try doc.data(as: Specialist.self)
+                        return specialist
+                    } catch {
+                        print("Veri dönüştürme hatası: \(error)")
+                        return nil
+                    }
+                    
+                }
+                completion(nil, specialists)
+            }
+            
         }
     }
     

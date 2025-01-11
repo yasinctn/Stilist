@@ -92,12 +92,12 @@ struct SalonDetailView: View {
                         .font(.headline)
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 20) {
-                            ForEach(viewModel.salonDetail?.specialists ?? []) { specialist in
+                            ForEach(viewModel.specialists) { specialist in
                                 VStack {
                                     Circle()
                                         .frame(width: 60, height: 60)
                                         .foregroundColor(.gray)
-                                    Text(specialist.name ?? "")
+                                    Text("\(specialist.name) \(specialist.surname)")
                                         .font(.subheadline)
                                 }
                             }
@@ -142,7 +142,10 @@ struct SalonDetailView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            viewModel.getSalonDetail(for: selectedSalonId)
+            Task {
+                viewModel.getSalonDetail(for: selectedSalonId)
+                viewModel.getSpecialists(for: selectedSalonId)
+            }
         }
     }
 }
