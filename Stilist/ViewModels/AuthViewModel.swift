@@ -51,8 +51,8 @@ final class AuthViewModel: ObservableObject {
     }
     
     func saveSpecialistToSalon(name: String, surname: String, email: String, phoneNumber: String, role: UserRole, salonID: String, completion: @escaping (Error?) -> Void) {
-        let specialist = Specialist(id: UUID().uuidString, name: name, surname: surname, email: email, phoneNumber: phoneNumber, salonId: salonID)
-        authService?.addSpecialistToSalon(specialist: specialist, completion: { error in
+        
+        authService?.addSpecialistToSalon(name: name, surname: surname, email: email, phoneNumber: phoneNumber, role: role, salonID: salonID, completion: { error in
             if let error {
                 print("uzman kaydedilemedi " + error.localizedDescription)
             }else {

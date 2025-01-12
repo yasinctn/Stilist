@@ -19,7 +19,7 @@ class BookingsViewModel: ObservableObject {
     }
     
     func fetchBookings(userId: String, status: Status) {
-        bookingService.fetchAppointments(for: userId, status: status) { result in
+        bookingService.fetchAppointments(userId: userId, status: status) { result in
             switch result {
             case .success(let appointments):
                 switch status {

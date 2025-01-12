@@ -10,8 +10,11 @@ import MapKit
 
 struct SalonDetailView: View {
     
-    @EnvironmentObject private var viewModel: SalonDetailViewModel
-    @EnvironmentObject private var authViewModel: AuthViewModel
+    @EnvironmentObject var viewModel: SalonDetailViewModel
+    @EnvironmentObject var authViewModel: AuthViewModel
+    @EnvironmentObject var chatViewModel: ChatViewModel
+    @EnvironmentObject var messageViewModel: MessageViewModel
+    @EnvironmentObject var appointmentViewModel: AppointmentViewModel
     
     @State var selectedSalonId: String?
     @State private var selectedTab: String = "Hakkımızda"
@@ -54,9 +57,9 @@ struct SalonDetailView: View {
                                         senderID: authViewModel.currentUser?.id,
                                         barberName: viewModel.salonDetail?.name
                              )
-                            .environmentObject(ChatViewModel())
+                            .environmentObject(chatViewModel)
                             .environmentObject(authViewModel)
-                            .environmentObject(MessageViewModel())
+                            .environmentObject(messageViewModel)
                         } label: {
                             Text("Mesaj")
                                 .padding(7)
@@ -67,8 +70,8 @@ struct SalonDetailView: View {
                         }
                         
                         NavigationLink {
-                            AppointmentView()
-                                .environmentObject(AppointmentViewModel())
+                            AppointmentView(selectedSalonID: viewModel.salonDetail?.id)
+                                .environmentObject(appointmentViewModel)
                                 .environmentObject(authViewModel)
                         } label: {
                             Text("Randevu al")
@@ -92,13 +95,19 @@ struct SalonDetailView: View {
                         .font(.headline)
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 20) {
-                            ForEach(viewModel.specialists) { specialist in
-                                VStack {
-                                    Circle()
-                                        .frame(width: 60, height: 60)
-                                        .foregroundColor(.gray)
-                                    Text("\(specialist.name) \(specialist.surname)")
-                                        .font(.subheadline)
+                            if viewModel.specialists.isEmpty {
+                                ProgressView("Loading...")
+                                    .progressViewStyle(CircularProgressViewStyle())
+                                    .padding()
+                            }else {
+                                ForEach(viewModel.specialists) { specialist in
+                                    VStack {
+                                        Circle()
+                                            .frame(width: 60, height: 60)
+                                            .foregroundColor(.gray)
+                                        Text("\(specialist.name) \(specialist.surname)")
+                                            .font(.subheadline)
+                                    }
                                 }
                             }
                         }
@@ -126,15 +135,14 @@ struct SalonDetailView: View {
                 Divider()
                 
                 
-                switch selectedTab {
-                case "Hakkımızda":
+                if selectedTab == "Hakkımızda"{
                     AboutUsView(salonDetail: viewModel.salonDetail)
-                case "Hizmetler":
+                }
+                else if selectedTab == "Hizmetler" {
                     ServicesView(services: viewModel.services)
-                case "Yorumlar":
+                }
+                else if selectedTab == "Yorumlar" {
                     ReviewsView(reviews: viewModel.reviews)
-                default:
-                    EmptyView()
                 }
                 
             }
@@ -142,9 +150,12 @@ struct SalonDetailView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            Task {
-                viewModel.getSalonDetail(for: selectedSalonId)
-                viewModel.getSpecialists(for: selectedSalonId)
+            if let selectedSalonId {
+                Task {
+                    await viewModel.getSpecialists(for: selectedSalonId)
+                    await viewModel.getSalonDetail(for: selectedSalonId)
+                    
+                }
             }
         }
     }

@@ -1,13 +1,13 @@
 //
-//  TabViewContent.swift
+//  SpecialistTabViewController.swift
 //  Stilist
 //
-//  Created by Yasin Cetin on 16.11.2024.
+//  Created by Yasin Cetin on 11.01.2025.
 //
 
 import SwiftUI
 
-struct TabViewContent: View {
+struct SpecialistTabViewController: View {
     
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var navigationViewModel: NavigationViewModel
@@ -17,7 +17,7 @@ struct TabViewContent: View {
     @EnvironmentObject var appointmentViewModel: AppointmentViewModel
     @EnvironmentObject var salonDetailViewModel: SalonDetailViewModel
     @EnvironmentObject var exploreViewModel: ExploreViewModel
-    @EnvironmentObject var messageViewModel: MessageViewModel
+    @EnvironmentObject var specialistHomeViewModel: SpecialistHomeViewModel
     
     @State var selectedTab: Tab = .home
     
@@ -28,30 +28,15 @@ struct TabViewContent: View {
         TabView (selection: $selectedTab) {
             
             // Home tab
-            HomeView(selectedTab: $selectedTab)
+            SpecialistHomeView()
                 .environmentObject(navigationViewModel)
                 .environmentObject(authViewModel)
-                .environmentObject(homeViewModel)
-                .environmentObject(locationManager)
-                .environmentObject(salonDetailViewModel)
-                .environmentObject(appointmentViewModel)
-                .environmentObject(messageViewModel)
-                .environmentObject(chatViewModel)
+                .environmentObject(specialistHomeViewModel)
                 .tabItem {
                     Image(systemName: "house.fill")
                     Text("Home")
                 }
                 .tag(Tab.home)
-            // Explore tab
-            ExploreView()
-                .environmentObject(locationManager)
-                .environmentObject(navigationViewModel)
-                .environmentObject(exploreViewModel)
-                .tabItem {
-                    Image(systemName: "safari.fill")
-                    Text("Explore")
-                }
-                .tag(Tab.explore)
             
             // My Booking tab
             MyBookingView()
@@ -86,5 +71,5 @@ struct TabViewContent: View {
 }
 
 #Preview {
-    TabViewContent()
+    SpecialistTabViewController()
 }

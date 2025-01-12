@@ -13,7 +13,11 @@ struct AppointmentView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var viewModel: AppointmentViewModel
     
-    @State private var selectedDate: Date = Date.now
+    @State var selectedDate: Date = Date()
+    @State var selectedTime: String = ""
+    @State var selectedSpecialistId: String = "765464654654"
+    @State var selectedSalonID: String?
+    
     
     var body: some View {
         ScrollView {
@@ -31,31 +35,23 @@ struct AppointmentView: View {
                     HStack(spacing: 10) {
                         ForEach(viewModel.specialists) { specialist in
                             VStack {
-                                Image("")
-                                    .resizable()
-                                    .frame(width: 60, height: 60)
-                                    .clipShape(Circle())
-                                
-                                Text("specialist.name")
-                                    .font(.subheadline)
-                                
-                                Text("specialist.role")
-                                    .font(.caption)
+                                SpecialistCellView(specialist: specialist)
+                                    .onTapGesture {
+                                        selectedSpecialistId = specialist.id
+                                    }
                             }
                             .padding()
-                            
-                            //.background(viewModel.selectedSpecialistId == specialist.id ? Color.orange.opacity(0.3) : Color.clear)
+                        
+                            .background(selectedSpecialistId == specialist.id ? Color.orange.opacity(0.3) : Color.clear)
                             .cornerRadius(10)
-                            .onTapGesture {
-                                //viewModel.selectedSpecialistId = specialist.id
-                            }
+                            
                         }
                     }
                     .padding()
                 }
                 .padding()
                 
-                DatePicker("Tarih seçin", selection: $viewModel.selectedDate, displayedComponents: .date)
+                DatePicker("Tarih seçin", selection: $selectedDate, displayedComponents: .date)
                     .datePickerStyle(GraphicalDatePickerStyle())
                     .padding()
                 
@@ -68,10 +64,10 @@ struct AppointmentView: View {
                         ForEach(["09:00", "10:00", "11:00", "12:00", "13:00", "14:00"], id: \.self) { time in
                             Text(time)
                                 .padding()
-                                .background(viewModel.selectedTime == time ? Color.orange : Color.gray.opacity(0.2))
+                                .background(selectedTime == time ? Color.orange : Color.gray.opacity(0.2))
                                 .cornerRadius(10)
                                 .onTapGesture {
-                                    viewModel.selectedTime = time
+                                    selectedTime = time
                                 }
                         }
                     }
@@ -79,9 +75,11 @@ struct AppointmentView: View {
                 }
                 
                 Button(action: {
-                    guard let userId = AuthViewModel().currentUser?.id else { return }
-                    
-                    viewModel.saveAppointment(userId: userId)
+                    if let userId = authViewModel.currentUser?.id {
+                        viewModel.saveAppointment(userId: userId, specialistID: selectedSpecialistId, selectedDate: selectedDate, selectedTime: selectedTime)
+                    }else {
+                        print("userID gelmedi")
+                    }
                 }) {
                     Text("Oluştur")
                         .frame(maxWidth: .infinity)
@@ -93,6 +91,15 @@ struct AppointmentView: View {
                 .padding()
             }
             .padding()
+        }
+        .onAppear {
+            if let selectedSalonID {
+                Task {
+                    await viewModel.fetchSpecialists(salonId: selectedSalonID)
+                }
+            }else {
+                print("salon id gelmedi")
+            }
         }
     }
 }

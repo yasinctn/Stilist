@@ -8,8 +8,16 @@
 import SwiftUI
 
 struct SpecialistHomeView: View {
+    
+    @EnvironmentObject var viewModel: SpecialistHomeViewModel
+    @EnvironmentObject var authViewModel: AuthViewModel
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        List(viewModel.appointments) { appointment in
+            
+            Text(appointment.userId)
+            
+        }
     }
 }
 

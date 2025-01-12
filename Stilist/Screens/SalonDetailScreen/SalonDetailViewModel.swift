@@ -21,7 +21,7 @@ final class SalonDetailViewModel: ObservableObject {
         self.firestoreService = firestoreService
     }
     
-    func getSalonDetail(for salonId: String?) {
+    func getSalonDetail(for salonId: String?) async {
         if let salonId {
             firestoreService?.fetchSalonDetails(salonId: salonId, completion: { salonDetail in
                 DispatchQueue.main.async {
@@ -42,27 +42,25 @@ final class SalonDetailViewModel: ObservableObject {
         
     }
     
-    func getSpecialists(for salonId: String?) {
-        if let salonId {
+    func getSpecialists(for salonId: String) async {
+        
             firestoreService?.fetchSpecialists(salonId: salonId, completion: { error, specialistList in
                 if let error {
                     print("uzmanlar alınamadı" + error.localizedDescription)
                 }else {
-                    if let specialistList {
-                        DispatchQueue.main.async {
+                    DispatchQueue.main.async {
+                        if let specialistList {
+                            
                             self.specialists = specialistList
+                            print(specialistList)
+                        }else {
+                            print("uzmanlar boş geldi")
                         }
-                        print(specialistList)
-                    }else {
-                        print("uzmanlar boş geldi")
                     }
-                    
                 }
             })
-        }else {
-            print("id yok")
         }
         
-    }
+    
     
 }

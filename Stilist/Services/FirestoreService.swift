@@ -13,7 +13,7 @@ protocol FirestoreServiceProtocol: AnyObject {
     func fetchSalons(completion: @escaping (Result<[Salon], Error>) -> Void)
     func fetchSalonDetails(salonId: String, completion: @escaping (SalonDetail?) -> Void)
     func getUserData(id: String?, completion: @escaping (AppUser?) -> Void)
-    func fetchSpecialists(salonId: String, completion: @escaping (Error?, [Specialist]?) -> Void)
+    func fetchSpecialists(salonId: String, completion: @escaping (Error?, [Specialist]?) -> Void) 
 }
 
 final class FirestoreService {
@@ -112,7 +112,6 @@ extension FirestoreService: FirestoreServiceProtocol {
                 }
                 
                 let specialists = documents.compactMap { doc -> Specialist? in
-                    let data = doc.data()
                     
                     // Specialist modeline uygun özellikleri alın.
                     do {

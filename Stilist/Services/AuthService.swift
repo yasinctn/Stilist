@@ -11,7 +11,7 @@ import FirebaseAuth
 
 protocol AuthServiceProtocol: AnyObject {
     func createUser(name: String, surname: String, email: String, phoneNumber: String, password: String, role: UserRole, completion: @escaping (Error?) -> Void)
-    func addSpecialistToSalon(specialist: Specialist?, completion: @escaping (Error?) -> Void)
+    func addSpecialistToSalon(name: String, surname: String, email: String, phoneNumber: String, role: UserRole, salonID: String, completion: @escaping (Error?) -> Void)
     func signIn(email: String, password: String, completion: @escaping (Error?) -> Void)
     func signOut(completion: @escaping (Error?) -> Void)
 }
@@ -152,11 +152,9 @@ extension AuthService {
         
     }
     
-    func addSpecialistToSalon(specialist: Specialist?, completion: @escaping (Error?) -> Void) {
+    func addSpecialistToSalon(name: String, surname: String, email: String, phoneNumber: String, role: UserRole, salonID: String, completion: @escaping (Error?) -> Void) {
         
-        guard let specialist else {
-            return
-        }
+        let specialist = Specialist(id: UUID().uuidString, name: name, surname: surname, email: email, phoneNumber: phoneNumber, salonId: salonID)
         
         let specialistData: [String: Any] = [
             "id" : specialist.id,

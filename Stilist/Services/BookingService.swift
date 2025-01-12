@@ -9,14 +9,14 @@ import Foundation
 import FirebaseFirestore
 
 protocol BookingServiceProtocol {
-    func fetchAppointments(for userId: String, status: Status, completion: @escaping (Result<[Appointment], Error>) -> Void)
+    func fetchAppointments(userId: String, status: Status, completion: @escaping (Result<[Appointment], Error>) -> Void)
     func saveAppointment(_ appointment: Appointment, completion: @escaping (Error?) -> Void)
 }
 
 final class BookingService: BookingServiceProtocol {
     private let db = Firestore.firestore()
     
-    func fetchAppointments(for userId: String, status: Status, completion: @escaping (Result<[Appointment], Error>) -> Void) {
+    func fetchAppointments(userId: String, status: Status, completion: @escaping (Result<[Appointment], Error>) -> Void) {
         db.collection("appointments")
             .whereField("userId", isEqualTo: userId)
             .whereField("status", isEqualTo: status.rawValue)

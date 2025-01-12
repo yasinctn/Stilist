@@ -16,11 +16,10 @@ final class HomeViewModel: ObservableObject {
     
     init(firestoreService: FirestoreServiceProtocol? = FirestoreService()) {
         self.firestoreService = firestoreService
-        getSalons()
     }
     
     
-    private func getSalons() {
+    func getSalons() async {
         firestoreService?.fetchSalons { result in
             
             switch result {

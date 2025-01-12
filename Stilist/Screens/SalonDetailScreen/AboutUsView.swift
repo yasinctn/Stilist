@@ -12,6 +12,7 @@ struct AboutUsView: View {
     
     @State var salonDetail: SalonDetail?
     
+    
     var body: some View {
         VStack(alignment: .leading) {
             Text(salonDetail?.description ?? "")
@@ -35,7 +36,7 @@ struct AboutUsView: View {
             }
             .padding(.top)
             
-            Map {
+            Map(initialPosition: .region(MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: salonDetail?.latitude ?? 0.0, longitude: salonDetail?.longitude ?? 0.0), span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)))) {
                 Annotation(salonDetail?.name ?? "",
                            coordinate: CLLocationCoordinate2D(
                             latitude: salonDetail?.latitude ?? 0.0,

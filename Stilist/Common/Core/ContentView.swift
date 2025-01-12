@@ -17,7 +17,8 @@ struct ContentView: View {
     @StateObject private var homeViewModel = HomeViewModel(firestoreService: FirestoreService())
     @StateObject private var salonDetailViewModel = SalonDetailViewModel(firestoreService: FirestoreService())
     @StateObject private var exploreViewModel = ExploreViewModel(firestoreService: FirestoreService())
-    
+    @StateObject private var specialistHomeViewModel = SpecialistHomeViewModel(bookingService: BookingService())
+    @StateObject private var messageViewModel = MessageViewModel(chatService: ChatService())
     
     var body: some View {
         
@@ -35,12 +36,12 @@ struct ContentView: View {
                     .environmentObject(homeViewModel)
                     .environmentObject(salonDetailViewModel)
                     .environmentObject(exploreViewModel)
+                    .environmentObject(messageViewModel)
                     .animation(.easeInOut, value: authViewModel.isSignedIn)
                     .transition(.slide)
             }
             else if authViewModel.currentUser?.userRole == .specialist {
-                TabViewContent()
-                    .environmentObject(locationManager)
+                SpecialistTabViewController()
                     .environmentObject(appointmentViewModel)
                     .environmentObject(navigationViewModel)
                     .environmentObject(authViewModel)
@@ -48,6 +49,7 @@ struct ContentView: View {
                     .environmentObject(homeViewModel)
                     .environmentObject(salonDetailViewModel)
                     .environmentObject(exploreViewModel)
+                    .environmentObject(specialistHomeViewModel)
                     .animation(.easeInOut, value: authViewModel.isSignedIn)
                     .transition(.slide)
             }

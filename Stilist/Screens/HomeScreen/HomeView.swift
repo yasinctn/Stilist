@@ -21,6 +21,9 @@ struct HomeView: View {
     @EnvironmentObject var homeViewModel: HomeViewModel
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var salonDetailViewModel: SalonDetailViewModel
+    @EnvironmentObject var messageViewModel: MessageViewModel
+    @EnvironmentObject var appointmentViewModel: AppointmentViewModel
+    @EnvironmentObject var chatViewModel: ChatViewModel
     
     @Binding var selectedTab: Tab
     
@@ -107,6 +110,9 @@ struct HomeView: View {
                                         SalonDetailView(selectedSalonId: salon.id)
                                             .environmentObject(salonDetailViewModel)
                                             .environmentObject(authViewModel)
+                                            .environmentObject(appointmentViewModel)
+                                            .environmentObject(messageViewModel)
+                                            .environmentObject(chatViewModel)
                                     } label: {
                                         NearbyCard(
                                             title: salon.name,
@@ -129,7 +135,11 @@ struct HomeView: View {
             */
             .toolbar(.hidden)
         }
-        
+        .onAppear {
+            Task {
+                await homeViewModel.getSalons()
+            }
+        }
     }
 }
 

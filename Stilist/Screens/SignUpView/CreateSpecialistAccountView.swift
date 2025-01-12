@@ -109,14 +109,17 @@ struct CreateSpecialistAccountView: View {
                             
                         
                         }else {
-                            authViewModel.saveSpecialistToSalon(name: name, surname: surname, email: email, phoneNumber: phoneNumber, role: .specialist, salonID: salonCode) { error in
-                                    if let error {
-                                        errorMessage = error.localizedDescription
-                                        showAlert = true
-                                        print(error.localizedDescription)
-                                    }
-                            }
+                            print("kullanıcı oluşturuldu")
                         }
+                    }
+                    authViewModel.saveSpecialistToSalon(name: name, surname: surname, email: email, phoneNumber: phoneNumber, role: .specialist, salonID: salonCode) { error in
+                            if let error {
+                                errorMessage = error.localizedDescription
+                                showAlert = true
+                                print(error.localizedDescription)
+                            }else {
+                                print("kullanıcı kaydedildi")
+                            }
                     }
                     
                 }) {
