@@ -24,7 +24,6 @@ struct SpecialistTabViewController: View {
     
     var body: some View {
         
-        
         TabView (selection: $selectedTab) {
             
             // Home tab

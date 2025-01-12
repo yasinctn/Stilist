@@ -15,7 +15,8 @@ struct AppointmentView: View {
     
     @State var selectedDate: Date = Date()
     @State var selectedTime: String = ""
-    @State var selectedSpecialistId: String = "765464654654"
+    @State var selectedSpecialistId: String = ""
+    @State var selectedSpecialistName: String?
     @State var selectedSalonID: String?
     
     
@@ -38,6 +39,7 @@ struct AppointmentView: View {
                                 SpecialistCellView(specialist: specialist)
                                     .onTapGesture {
                                         selectedSpecialistId = specialist.id
+                                        selectedSpecialistName = specialist.name + specialist.surname
                                     }
                             }
                             .padding()
@@ -75,8 +77,10 @@ struct AppointmentView: View {
                 }
                 
                 Button(action: {
-                    if let userId = authViewModel.currentUser?.id {
-                        viewModel.saveAppointment(userId: userId, specialistID: selectedSpecialistId, selectedDate: selectedDate, selectedTime: selectedTime)
+                    if let userId = authViewModel.currentUser?.id,
+                       let userName = authViewModel.currentUser?.name,
+                       let specialistName = selectedSpecialistName {
+                        viewModel.saveAppointment(userId: userId, userName: userName, specialistName: specialistName, specialistID: selectedSpecialistId, selectedDate: selectedDate, selectedTime: selectedTime)
                     }else {
                         print("userID gelmedi")
                     }

@@ -38,12 +38,14 @@ class AppointmentViewModel: ObservableObject {
         
     }
     
-    func saveAppointment(userId: String, specialistID: String, selectedDate: Date, selectedTime: String) {
+    func saveAppointment(userId: String, userName: String, specialistName: String, specialistID: String, selectedDate: Date, selectedTime: String) {
             
             let newAppointment = Appointment(
                 date: selectedDate,
                 time: selectedTime,
                 specialistId: specialistID,
+                specialistName: specialistName,
+                userName: userName,
                 userId: userId,
                 status: Status.upcoming
                 

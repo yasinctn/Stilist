@@ -43,6 +43,29 @@ final class BookingService: BookingServiceProtocol {
     
     func saveAppointment(_ appointment: Appointment, completion: @escaping (Error?) -> Void) {
         
+        let appointmentData: [String: Any] = [
+            "id" : appointment.id,
+            "date" : appointment.date,
+            "time" : appointment.time,
+            "specialistId" : appointment.specialistId,
+            "specialistName": appointment.specialistName,
+            "userName" : appointment.userName,
+            "userId" : appointment.userId,
+            "status" : appointment.status.rawValue
+            
+        ]
+        
+        db.collection("appointments")
+            .document(appointment.id).setData(appointmentData) { error in
+            if let error = error {
+                completion(error)
+            } else {
+                completion(nil)
+            }
+        }
+        
+        /*
+        
         guard let id = appointment.id, !id.isEmpty else {
             let error = NSError(
                 domain: "com.yourapp.error",
@@ -67,6 +90,8 @@ final class BookingService: BookingServiceProtocol {
             print("Error serializing appointment: \(error.localizedDescription)")
             completion(error)
         }
+         */
     }
+         
 
 }

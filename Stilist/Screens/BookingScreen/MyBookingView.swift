@@ -90,9 +90,9 @@ struct BookingCard: View {
                 .foregroundColor(.primary)
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(appointment.specialistId)
+                    Text(appointment.specialistName)
                         .font(.headline)
-                    Text(appointment.userId)
+                    Text(appointment.userName)
                         .font(.subheadline)
                         .foregroundColor(.primary)
                 }

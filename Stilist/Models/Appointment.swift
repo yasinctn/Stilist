@@ -10,10 +10,12 @@ import FirebaseFirestore
 
 struct Appointment: Identifiable, Codable {
     
-    var id: String? = UUID().uuidString
+    var id: String = UUID().uuidString
     var date: Date
     var time: String
     var specialistId: String
+    var specialistName: String
+    var userName: String
     var userId: String
     var status: Status
 }
