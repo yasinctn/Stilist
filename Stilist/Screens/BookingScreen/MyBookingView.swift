@@ -11,6 +11,7 @@ struct MyBookingView: View {
     
     @EnvironmentObject var navigationViewModel: NavigationViewModel
     @EnvironmentObject var viewModel: BookingsViewModel
+    @EnvironmentObject var authViewModel: AuthViewModel
     
     @State private var selectedTab: String = "Yaklaşan"
     
@@ -19,13 +20,13 @@ struct MyBookingView: View {
             // Tab Selector
             HStack {
                 BookingTabButton(title: "Yaklaşan", selectedTab: $selectedTab, action: {
-                    viewModel.fetchBookings(userId: AuthViewModel().currentUser?.id ?? "", status: .upcoming)
+                    viewModel.fetchBookings(userId: authViewModel.currentUser?.id ?? "", status: .upcoming)
                 })
                 BookingTabButton(title: "Tamamlanan", selectedTab: $selectedTab, action: {
-                    viewModel.fetchBookings(userId: AuthViewModel().currentUser?.id ?? "", status: .completed)
+                    viewModel.fetchBookings(userId: authViewModel.currentUser?.id ?? "", status: .completed)
                 })
                 BookingTabButton(title: "İptal", selectedTab: $selectedTab, action: {
-                    viewModel.fetchBookings(userId: AuthViewModel().currentUser?.id ?? "", status: .cancelled)
+                    viewModel.fetchBookings(userId: authViewModel.currentUser?.id ?? "", status: .cancelled)
                 })
             }
             .padding(.horizontal)

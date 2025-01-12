@@ -19,15 +19,15 @@ final class BookingService: BookingServiceProtocol {
     func fetchAppointments(userId: String, status: Status, completion: @escaping (Result<[Appointment], Error>) -> Void) {
         db.collection("appointments")
             .whereField("userId", isEqualTo: userId)
-            .whereField("status", isEqualTo: status.rawValue)
-            .order(by: "date", descending: false)
             .getDocuments { snapshot, error in
                 if let error = error {
+                    print("Error fetching appointments: \(error.localizedDescription)")
                     completion(.failure(error))
                     return
                 }
                 
                 guard let documents = snapshot?.documents else {
+                    print("No documents found.")
                     completion(.success([]))
                     return
                 }
@@ -39,18 +39,34 @@ final class BookingService: BookingServiceProtocol {
                 completion(.success(appointments))
             }
     }
+
     
     func saveAppointment(_ appointment: Appointment, completion: @escaping (Error?) -> Void) {
         
-        guard let id = appointment.id else {
-            completion(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid Appointment ID"]))
+        guard let id = appointment.id, !id.isEmpty else {
+            let error = NSError(
+                domain: "com.yourapp.error",
+                code: 400,
+                userInfo: [NSLocalizedDescriptionKey: "Invalid or missing Appointment ID"]
+            )
+            completion(error)
             return
         }
         
         do {
-            try db.collection("appointments").document(id).setData(from: appointment, merge: true, completion: completion)
+            
+            try db.collection("appointments")
+                .document(id)
+                .setData(from: appointment, merge: true) { error in
+                    if let error = error {
+                        print("Error saving appointment: \(error.localizedDescription)")
+                    }
+                    completion(error)
+                }
         } catch {
+            print("Error serializing appointment: \(error.localizedDescription)")
             completion(error)
         }
     }
+
 }

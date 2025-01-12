@@ -19,6 +19,7 @@ struct ContentView: View {
     @StateObject private var exploreViewModel = ExploreViewModel(firestoreService: FirestoreService())
     @StateObject private var specialistHomeViewModel = SpecialistHomeViewModel(bookingService: BookingService())
     @StateObject private var messageViewModel = MessageViewModel(chatService: ChatService())
+    @StateObject private var bookingsViewModel = BookingsViewModel(bookingService: BookingService())
     
     var body: some View {
         
@@ -37,6 +38,7 @@ struct ContentView: View {
                     .environmentObject(salonDetailViewModel)
                     .environmentObject(exploreViewModel)
                     .environmentObject(messageViewModel)
+                    .environmentObject(bookingsViewModel)
                     .animation(.easeInOut, value: authViewModel.isSignedIn)
                     .transition(.slide)
             }

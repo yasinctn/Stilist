@@ -18,6 +18,7 @@ struct TabViewContent: View {
     @EnvironmentObject var salonDetailViewModel: SalonDetailViewModel
     @EnvironmentObject var exploreViewModel: ExploreViewModel
     @EnvironmentObject var messageViewModel: MessageViewModel
+    @EnvironmentObject var bookingsViewModel: BookingsViewModel
     
     @State var selectedTab: Tab = .home
     
@@ -56,7 +57,8 @@ struct TabViewContent: View {
             // My Booking tab
             MyBookingView()
                 .environmentObject(navigationViewModel)
-                .environmentObject(BookingsViewModel())
+                .environmentObject(bookingsViewModel)
+                .environmentObject(authViewModel)
                 .tabItem {
                     Image(systemName: "calendar")
                     Text("My Booking")

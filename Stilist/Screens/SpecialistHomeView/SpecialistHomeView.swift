@@ -18,6 +18,9 @@ struct SpecialistHomeView: View {
             Text(appointment.userId)
             
         }
+        .onAppear {
+            viewModel.fetchAppointments()
+        }
     }
 }
 
