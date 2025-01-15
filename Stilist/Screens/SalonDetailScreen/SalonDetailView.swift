@@ -44,7 +44,7 @@ struct SalonDetailView: View {
                     HStack(spacing: 2) {
                         Image(systemName: "star.fill")
                             .foregroundColor(.yellow)
-                        Text("4.8")
+                        Text(viewModel.salonDetail?.rating ?? "00")
                     }
                     Text(String(viewModel.reviews.count))
                         .foregroundColor(.gray)
@@ -96,15 +96,14 @@ struct SalonDetailView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 20) {
                             if viewModel.specialists.isEmpty {
-                                ProgressView("Loading...")
-                                    .progressViewStyle(CircularProgressViewStyle())
-                                    .padding()
+                                
                             }else {
                                 ForEach(viewModel.specialists) { specialist in
                                     VStack {
-                                        Circle()
+                                        Image(systemName: "person")
                                             .frame(width: 60, height: 60)
                                             .foregroundColor(.gray)
+                                            
                                         Text("\(specialist.name) \(specialist.surname)")
                                             .font(.subheadline)
                                     }

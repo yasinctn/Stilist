@@ -15,7 +15,7 @@ struct SpecialistHomeView: View {
     var body: some View {
         List(viewModel.appointments) { appointment in
             
-            Text(appointment.userId)
+            BookingCardView(appointment: appointment)
             
         }
         .onAppear {

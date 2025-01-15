@@ -38,7 +38,13 @@ class AppointmentViewModel: ObservableObject {
         
     }
     
-    func saveAppointment(userId: String, userName: String, specialistName: String, specialistID: String, selectedDate: Date, selectedTime: String) {
+    func saveAppointment(userId: String,
+                         userName: String,
+                         specialistName: String,
+                         specialistID: String,
+                         selectedDate: Date,
+                         selectedTime: String,
+                         completion: @escaping (Appointment) -> Void) {
             
             let newAppointment = Appointment(
                 date: selectedDate,
@@ -55,6 +61,7 @@ class AppointmentViewModel: ObservableObject {
                 if let error = error {
                     print("Randevu kaydedilemedi: \(error.localizedDescription)")
                 } else {
+                    completion(newAppointment)
                     print("Randevu başarıyla kaydedildi!")
                 }
             }

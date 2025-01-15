@@ -41,24 +41,24 @@ struct ProfileView: View {
                     List {
                         Section {
                             NavigationLink(destination: Text("Edit Profile View")) {
-                                Label("Edit Profile", systemImage: "person.crop.circle")
+                                Label("Profili Düzenle", systemImage: "person.crop.circle")
                             }
                             NavigationLink(destination: Text("Notification Settings")) {
-                                Label("Notification", systemImage: "bell")
+                                Label("Bildirimler", systemImage: "bell")
                             }
                             
                             NavigationLink(destination: Text("Security Settings")) {
-                                Label("Security", systemImage: "lock")
+                                Label("Güvenlik", systemImage: "lock")
                             }
                         }
                         
                         
                         Section {
                             NavigationLink(destination: Text("Privacy Policy")) {
-                                Label("Privacy Policy", systemImage: "doc.text")
+                                Label("Gizlilik Politikası", systemImage: "doc.text")
                             }
                             NavigationLink(destination: Text("Invite Friends")) {
-                                Label("Invite Friends", systemImage: "person.2")
+                                Label("Arkadaşını Davet Et", systemImage: "person.2")
                             }
                         }
                         
@@ -71,7 +71,7 @@ struct ProfileView: View {
                                     }
                                 }
                             }) {
-                                Label("Logout", systemImage: "arrow.backward.square")
+                                Label("Çıkış Yap", systemImage: "arrow.backward.square")
                                     .foregroundColor(.red)
                             }
                         }

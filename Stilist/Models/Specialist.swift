@@ -18,9 +18,11 @@ struct Specialist: Identifiable, Codable {
     let salonId: String
 }
 
-struct Unavailability: Identifiable, Codable {
-    var id: String?
-    var date: Date?
-    var hours: [String]?
-    
-}
+/*
+ struct Unavailability: Identifiable, Codable {
+ var id: String?
+ var date: Date?
+ var hours: [String]?
+ 
+ }
+ */

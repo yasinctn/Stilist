@@ -30,14 +30,21 @@ final class AuthService: ObservableObject {
 
 extension AuthService: AuthServiceProtocol {
     
-    func createUser(name: String,surname: String, email: String, phoneNumber: String, password: String, role: UserRole, completion: @escaping ((any Error)?) -> Void) {
+    func createUser(name: String,
+                    surname: String,
+                    email: String, phoneNumber: String, password: String, role: UserRole, completion: @escaping ((any Error)?) -> Void) {
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in
             guard let self else { return }
             if let error = error {
                 completion(error)
                 print("Error creating user: \(error.localizedDescription)")
             } else {
-                let newUser = AppUser(id: result!.user.uid, name: name, surname: surname, email: email, phoneNumber: phoneNumber, userRole: role)
+                let newUser = AppUser(id: result!.user.uid,
+                                      name: name,
+                                      surname: surname,
+                                      email: email,
+                                      phoneNumber: phoneNumber,
+                                      userRole: role)
                 writeUserData(newUser) { error in
                     if let error = error {
                         completion(error)

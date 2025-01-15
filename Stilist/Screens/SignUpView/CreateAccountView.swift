@@ -39,7 +39,7 @@ struct CreateAccountView: View {
                     Image(systemName: "Person.crop.circle.fill")
                         .resizable()
                         .foregroundStyle(Color.white)
-                        .frame(width: 90, height: 90)
+                        .frame(width: 100, height: 90)
                         .overlay {
                             Image(systemName: "pencil.circle.fill")
                                 .foregroundColor(.orange)

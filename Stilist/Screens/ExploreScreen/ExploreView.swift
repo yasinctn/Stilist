@@ -14,6 +14,12 @@ struct ExploreView: View {
     
     @EnvironmentObject private var locationManager: LocationManager
     @EnvironmentObject private var viewModel: ExploreViewModel
+    @EnvironmentObject private var navigationViewModel: NavigationViewModel
+    @EnvironmentObject private var authViewModel: AuthViewModel
+    @EnvironmentObject private var salonDetailViewModel: SalonDetailViewModel
+    @EnvironmentObject private var messageViewModel: MessageViewModel
+    @EnvironmentObject private var appointmentViewModel: AppointmentViewModel
+    @EnvironmentObject private var chatViewModel: ChatViewModel
     
     var body: some View {
         
@@ -69,26 +75,24 @@ struct ExploreView: View {
                         VStack(spacing: 10) {
                             Capsule()
                                 .frame(width: 50, height: 5)
-                                .foregroundColor(.gray)
+                                .foregroundStyle(Color.black)
                                 .padding(.top, 10)
                             
                             Text("Detaylar")
                                 .font(.headline)
                                 .padding(.bottom, 5)
+                                .foregroundStyle(Color.black)
                             
                             HStack(spacing: 15) {
-                                Image(salon.imageName)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 60, height: 60)
-                                    .cornerRadius(8)
+                                
                                 
                                 VStack(alignment: .leading, spacing: 5) {
                                     Text(salon.name)
                                         .font(.headline)
+                                        .foregroundStyle(Color.black)
                                     Text(salon.address)
                                         .font(.subheadline)
-                                        .foregroundColor(.gray)
+                                        .foregroundStyle(Color.gray)
                                     HStack {
                                         Text(salon.distance)
                                             .font(.subheadline)
@@ -109,10 +113,15 @@ struct ExploreView: View {
                             }
                             .padding(.horizontal)
                             
-                            Button(action: {
-                                // Get directions action
-                            }) {
-                                Text("Get Direction")
+                            NavigationLink {
+                                SalonDetailView(selectedSalonId: salon.id)
+                                    .environmentObject(salonDetailViewModel)
+                                    .environmentObject(authViewModel)
+                                    .environmentObject(appointmentViewModel)
+                                    .environmentObject(messageViewModel)
+                                    .environmentObject(chatViewModel)
+                            } label: {
+                                Text("İncele")
                                     .fontWeight(.bold)
                                     .frame(maxWidth: .infinity)
                                     .padding()

@@ -112,8 +112,6 @@ extension FirestoreService: FirestoreServiceProtocol {
                 }
                 
                 let specialists = documents.compactMap { doc -> Specialist? in
-                    
-                    // Specialist modeline uygun özellikleri alın.
                     do {
                         let specialist = try doc.data(as: Specialist.self)
                         return specialist
@@ -142,8 +140,6 @@ extension FirestoreService: FirestoreServiceProtocol {
                 completion(nil)
                 return
             }
-            
-            // Veriyi doğrudan modelle decode etme
             do {
                 let salonDetail = try document.data(as: SalonDetail.self)
                 completion(salonDetail)

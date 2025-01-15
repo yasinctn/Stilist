@@ -43,7 +43,20 @@ struct ContentView: View {
                     .transition(.slide)
             }
             else if authViewModel.currentUser?.userRole == .specialist {
-                SpecialistTabViewController()
+                SpecialistTabViewContent()
+                    .environmentObject(appointmentViewModel)
+                    .environmentObject(navigationViewModel)
+                    .environmentObject(authViewModel)
+                    .environmentObject(chatViewModel)
+                    .environmentObject(homeViewModel)
+                    .environmentObject(salonDetailViewModel)
+                    .environmentObject(exploreViewModel)
+                    .environmentObject(specialistHomeViewModel)
+                    .animation(.easeInOut, value: authViewModel.isSignedIn)
+                    .transition(.slide)
+            }
+            else if authViewModel.currentUser?.userRole == .admin {
+                AdminTabViewContent()
                     .environmentObject(appointmentViewModel)
                     .environmentObject(navigationViewModel)
                     .environmentObject(authViewModel)

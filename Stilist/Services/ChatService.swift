@@ -23,10 +23,8 @@ final class ChatService: ChatServiceProtocol {
     
     
     func checkOrCreateChat(participants: [String], completion: @escaping (Result<String, Error>) -> Void) {
-        // Sort participants to ensure consistent comparison
         let sortedParticipants = participants.sorted()
 
-        // Query the chats collection for existing chat with the same participants
         db.collection("chats").whereField("participants", isEqualTo: sortedParticipants).getDocuments { (querySnapshot, error) in
             if let error = error {
                 completion(.failure(error))
@@ -34,13 +32,11 @@ final class ChatService: ChatServiceProtocol {
             }
 
             if let querySnapshot = querySnapshot, !querySnapshot.documents.isEmpty {
-                // Chat already exists, return the existing chat ID
                 if let existingChat = querySnapshot.documents.first {
                     let chatID = existingChat.documentID
                     completion(.success(chatID))
                 }
             } else {
-                // No existing chat found, create a new one
                 let chatID = UUID().uuidString
 
                 let chatData: [String: Any] = [
@@ -216,7 +212,7 @@ final class ChatService: ChatServiceProtocol {
                             let content = data["content"] as? String,
                             let timestamp = (data["timestamp"] as? Timestamp)?.dateValue(),
                             let isRead = data["isRead"] as? Bool
-                        else { print("çekmede hata");return nil }
+                        else { print("dönüştürülemedi");return nil }
                         
                         return Message(
                             id: doc.documentID,

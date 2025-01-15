@@ -10,7 +10,6 @@ import Foundation
 final class MessageViewModel: ObservableObject {
     
     @Published var messages: [Message] = []
-    
     private var chatService: ChatServiceProtocol
     
     init(chatService: ChatServiceProtocol = ChatService()) {
@@ -21,7 +20,6 @@ final class MessageViewModel: ObservableObject {
 extension MessageViewModel {
     
     func getMessages(chatID: String?, participants: [String?]) {
-        // Filter nil values from participants
         let validParticipants = participants.compactMap { $0 }
 
         if let chatID = chatID {
@@ -44,7 +42,6 @@ extension MessageViewModel {
             chatService.checkOrCreateChat(participants: validParticipants) { result in
                 switch result {
                 case .success(let newChatID):
-                    // Fetch messages for the newly created or existing chat
                     self.getMessages(chatID: newChatID, participants: validParticipants)
                 case .failure(let error):
                     print("Error creating or checking chat: \(error.localizedDescription)")

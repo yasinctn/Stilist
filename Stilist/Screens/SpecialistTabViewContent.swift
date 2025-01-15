@@ -1,5 +1,5 @@
 //
-//  SpecialistTabViewController.swift
+//  SpecialistTabViewContent.swift
 //  Stilist
 //
 //  Created by Yasin Cetin on 11.01.2025.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SpecialistTabViewController: View {
+struct SpecialistTabViewContent: View {
     
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var navigationViewModel: NavigationViewModel
@@ -70,5 +70,5 @@ struct SpecialistTabViewController: View {
 }
 
 #Preview {
-    SpecialistTabViewController()
+    SpecialistTabViewContent()
 }

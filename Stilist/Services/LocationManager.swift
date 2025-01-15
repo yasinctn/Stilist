@@ -76,8 +76,6 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
             DispatchQueue.main.async {
                 self.userLocation = location.coordinate
             }
-            
-            //burada iyileştirme yapılacak
         }
     }
     

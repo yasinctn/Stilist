@@ -1,13 +1,13 @@
 //
-//  TabViewContent.swift
+//  AdminTabViewContent.swift
 //  Stilist
 //
-//  Created by Yasin Cetin on 16.11.2024.
+//  Created by Yasin Cetin on 15.01.2025.
 //
 
 import SwiftUI
 
-struct TabViewContent: View {
+struct AdminTabViewContent: View {
     
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var navigationViewModel: NavigationViewModel
@@ -17,58 +17,33 @@ struct TabViewContent: View {
     @EnvironmentObject var appointmentViewModel: AppointmentViewModel
     @EnvironmentObject var salonDetailViewModel: SalonDetailViewModel
     @EnvironmentObject var exploreViewModel: ExploreViewModel
-    @EnvironmentObject var messageViewModel: MessageViewModel
-    @EnvironmentObject var bookingsViewModel: BookingsViewModel
+    @EnvironmentObject var specialistHomeViewModel: SpecialistHomeViewModel
     
     @State var selectedTab: Tab = .home
     
     
     var body: some View {
         
-        
         TabView (selection: $selectedTab) {
             
             // Home tab
-            HomeView(selectedTab: $selectedTab)
+            SpecialistHomeView()
                 .environmentObject(navigationViewModel)
                 .environmentObject(authViewModel)
-                .environmentObject(homeViewModel)
-                .environmentObject(locationManager)
-                .environmentObject(salonDetailViewModel)
-                .environmentObject(appointmentViewModel)
-                .environmentObject(messageViewModel)
-                .environmentObject(chatViewModel)
+                .environmentObject(specialistHomeViewModel)
                 .tabItem {
                     Image(systemName: "house.fill")
-                    
+                    Text("Home")
                 }
                 .tag(Tab.home)
-            // Explore tab
-            ExploreView()
-                .environmentObject(locationManager)
-                .environmentObject(navigationViewModel)
-                .environmentObject(exploreViewModel)
-                .environmentObject(navigationViewModel)
-                .environmentObject(authViewModel)
-                .environmentObject(locationManager)
-                .environmentObject(salonDetailViewModel)
-                .environmentObject(appointmentViewModel)
-                .environmentObject(messageViewModel)
-                .environmentObject(chatViewModel)
-                .tabItem {
-                    Image(systemName: "safari.fill")
-                    
-                }
-                .tag(Tab.explore)
             
             // My Booking tab
             MyBookingView()
                 .environmentObject(navigationViewModel)
-                .environmentObject(bookingsViewModel)
-                .environmentObject(authViewModel)
+                .environmentObject(BookingsViewModel())
                 .tabItem {
                     Image(systemName: "calendar")
-                    
+                    Text("My Booking")
                 }
                 .tag(Tab.myBooking)
             
@@ -79,7 +54,7 @@ struct TabViewContent: View {
                 .environmentObject(chatViewModel)
                 .tabItem {
                     Image(systemName: "bubble.left.and.bubble.right.fill")
-                    
+                    Text("Inbox")
                 }
                 .tag(Tab.inbox)
             
@@ -87,7 +62,7 @@ struct TabViewContent: View {
             ProfileView()
                 .tabItem {
                     Image(systemName: "person.crop.circle")
-                    
+                    Text("Profile")
                 }
                 .tag(Tab.profile)
         }
@@ -95,5 +70,5 @@ struct TabViewContent: View {
 }
 
 #Preview {
-    TabViewContent()
+    AdminTabViewContent()
 }

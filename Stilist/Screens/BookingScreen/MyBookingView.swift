@@ -35,17 +35,28 @@ struct MyBookingView: View {
             ScrollView {
                 
                 if selectedTab == "Yaklaşan" {
-                    
-                    ForEach(viewModel.upcomingBookings) { booking in
-                        BookingCard(appointment: booking, showActions: true)
+                    if viewModel.upcomingBookings.isEmpty {
+                        EmptyBookingsView()
+                    }else {
+                        ForEach(viewModel.upcomingBookings) { booking in
+                            BookingCardView(appointment: booking, showActions: true)
+                        }
                     }
                 } else if selectedTab == "Completed" {
-                    ForEach(viewModel.completedBookings) { booking in
-                        BookingCard(appointment: booking, showActions: false)
+                    if viewModel.completedBookings.isEmpty {
+                        EmptyBookingsView()
+                    }else {
+                        ForEach(viewModel.completedBookings) { booking in
+                            BookingCardView(appointment: booking, showActions: false)
+                        }
                     }
                 } else {
-                    ForEach(viewModel.cancelledBookings) { booking in
-                        BookingCard(appointment: booking, showActions: false)
+                    if viewModel.cancelledBookings.isEmpty {
+                        EmptyBookingsView()
+                    }else {
+                        ForEach(viewModel.cancelledBookings) { booking in
+                            BookingCardView(appointment: booking, showActions: false)
+                        }
                     }
                 }
             }
@@ -76,74 +87,6 @@ struct BookingTabButton: View {
                 .cornerRadius(15)
         }
     }
-}
-
-// Booking Card
-struct BookingCard: View {
-    var appointment: Appointment
-    var showActions: Bool
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(appointment.date.formatted())
-                .font(.subheadline)
-                .foregroundColor(.primary)
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(appointment.specialistName)
-                        .font(.headline)
-                    Text(appointment.userName)
-                        .font(.subheadline)
-                        .foregroundColor(.primary)
-                }
-                Spacer()
-                
-                switch appointment.status {
-                case .cancelled:
-                    Text(appointment.status.rawValue)
-                        .font(.footnote)
-                        .foregroundColor(.red)
-                        .padding(6)
-                        //.background(booking.statusColor.opacity(0.2))
-                        .cornerRadius(10)
-                case .completed:
-                    Text(appointment.status.rawValue)
-                        .font(.footnote)
-                        .foregroundColor(.green)
-                        .padding(6)
-                        //.background(booking.statusColor.opacity(0.2))
-                        .cornerRadius(10)
-                    Color.green
-                case .upcoming:
-                    Text(appointment.status.rawValue)
-                        .font(.footnote)
-                        .foregroundColor(.orange)
-                        .padding(6)
-                        //.background(booking.statusColor.opacity(0.2))
-                        .cornerRadius(10)
-                }
-                    
-            }
-            if showActions {
-                HStack {
-                    Spacer()
-                    Button("Cancel Booking") {
-                        // Action for Cancel
-                    }
-                    .foregroundColor(.red)
-                    
-                    
-                }
-                .padding(.top, 8)
-            }
-        }
-        .padding()
-        .background(Color(UIColor.secondarySystemBackground))
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
-        
-    }
-        
 }
 
 //MARK: - DENEME
