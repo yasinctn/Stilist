@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B01988052CE78371003FB8A2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B01988042CE78371003FB8A2 /* GoogleService-Info.plist */; };
 		B01988082CE784FA003FB8A2 /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = B01988072CE784FA003FB8A2 /* FirebaseAppCheck */; };
 		B019880A2CE784FA003FB8A2 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B01988092CE784FA003FB8A2 /* FirebaseAuth */; };
 		B019880C2CE784FA003FB8A2 /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = B019880B2CE784FA003FB8A2 /* FirebaseAuthCombine-Community */; };
@@ -40,7 +39,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		B01988042CE78371003FB8A2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B0ACBD032CE0D16F002889AD /* Stilist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stilist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0ACBD132CE0D171002889AD /* StilistTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StilistTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0ACBD1D2CE0D171002889AD /* StilistUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StilistUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -118,7 +116,6 @@
 			isa = PBXGroup;
 			children = (
 				B0ACBD052CE0D16F002889AD /* Stilist */,
-				B01988042CE78371003FB8A2 /* GoogleService-Info.plist */,
 				B0ACBD162CE0D171002889AD /* StilistTests */,
 				B0ACBD202CE0D171002889AD /* StilistUITests */,
 				B0ACBD042CE0D16F002889AD /* Products */,
@@ -270,7 +267,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B01988052CE78371003FB8A2 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

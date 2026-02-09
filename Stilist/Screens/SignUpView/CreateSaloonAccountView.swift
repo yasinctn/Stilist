@@ -52,9 +52,8 @@ struct CreateSaloonAccountView: View {
                         .cornerRadius(8)
                     
                     
-                    TextField("Parola", text: $phoneNumber)
+                    SecureField("Parola", text: $password)
                         .textFieldStyle(.plain)
-                        .lineLimit(5)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(8)

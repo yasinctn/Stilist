@@ -42,7 +42,7 @@ struct MyBookingView: View {
                             BookingCardView(appointment: booking, showActions: true)
                         }
                     }
-                } else if selectedTab == "Completed" {
+                } else if selectedTab == "Tamamlanan" {
                     if viewModel.completedBookings.isEmpty {
                         EmptyBookingsView()
                     }else {

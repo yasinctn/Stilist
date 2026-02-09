@@ -25,48 +25,58 @@ struct ContentView: View {
         
         
         if authViewModel.isSignedIn {
-            
-            if authViewModel.currentUser?.userRole == .customer {
-                
-                TabViewContent()
-                    .environmentObject(locationManager)
-                    .environmentObject(appointmentViewModel)
-                    .environmentObject(navigationViewModel)
-                    .environmentObject(authViewModel)
-                    .environmentObject(chatViewModel)
-                    .environmentObject(homeViewModel)
-                    .environmentObject(salonDetailViewModel)
-                    .environmentObject(exploreViewModel)
-                    .environmentObject(messageViewModel)
-                    .environmentObject(bookingsViewModel)
-                    .animation(.easeInOut, value: authViewModel.isSignedIn)
-                    .transition(.slide)
-            }
-            else if authViewModel.currentUser?.userRole == .specialist {
-                SpecialistTabViewContent()
-                    .environmentObject(appointmentViewModel)
-                    .environmentObject(navigationViewModel)
-                    .environmentObject(authViewModel)
-                    .environmentObject(chatViewModel)
-                    .environmentObject(homeViewModel)
-                    .environmentObject(salonDetailViewModel)
-                    .environmentObject(exploreViewModel)
-                    .environmentObject(specialistHomeViewModel)
-                    .animation(.easeInOut, value: authViewModel.isSignedIn)
-                    .transition(.slide)
-            }
-            else if authViewModel.currentUser?.userRole == .admin {
-                AdminTabViewContent()
-                    .environmentObject(appointmentViewModel)
-                    .environmentObject(navigationViewModel)
-                    .environmentObject(authViewModel)
-                    .environmentObject(chatViewModel)
-                    .environmentObject(homeViewModel)
-                    .environmentObject(salonDetailViewModel)
-                    .environmentObject(exploreViewModel)
-                    .environmentObject(specialistHomeViewModel)
-                    .animation(.easeInOut, value: authViewModel.isSignedIn)
-                    .transition(.slide)
+
+            if let userRole = authViewModel.currentUser?.userRole {
+                switch userRole {
+                case .customer:
+                    TabViewContent()
+                        .environmentObject(locationManager)
+                        .environmentObject(appointmentViewModel)
+                        .environmentObject(navigationViewModel)
+                        .environmentObject(authViewModel)
+                        .environmentObject(chatViewModel)
+                        .environmentObject(homeViewModel)
+                        .environmentObject(salonDetailViewModel)
+                        .environmentObject(exploreViewModel)
+                        .environmentObject(messageViewModel)
+                        .environmentObject(bookingsViewModel)
+                        .animation(.easeInOut, value: authViewModel.isSignedIn)
+                        .transition(.slide)
+                case .specialist:
+                    SpecialistTabViewContent()
+                        .environmentObject(appointmentViewModel)
+                        .environmentObject(navigationViewModel)
+                        .environmentObject(authViewModel)
+                        .environmentObject(chatViewModel)
+                        .environmentObject(homeViewModel)
+                        .environmentObject(salonDetailViewModel)
+                        .environmentObject(exploreViewModel)
+                        .environmentObject(specialistHomeViewModel)
+                        .environmentObject(bookingsViewModel)
+                        .animation(.easeInOut, value: authViewModel.isSignedIn)
+                        .transition(.slide)
+                case .admin:
+                    AdminTabViewContent()
+                        .environmentObject(appointmentViewModel)
+                        .environmentObject(navigationViewModel)
+                        .environmentObject(authViewModel)
+                        .environmentObject(chatViewModel)
+                        .environmentObject(homeViewModel)
+                        .environmentObject(salonDetailViewModel)
+                        .environmentObject(exploreViewModel)
+                        .environmentObject(specialistHomeViewModel)
+                        .environmentObject(bookingsViewModel)
+                        .animation(.easeInOut, value: authViewModel.isSignedIn)
+                        .transition(.slide)
+                }
+            } else {
+                VStack(spacing: 16) {
+                    ProgressView()
+                        .scaleEffect(1.5)
+                    Text("Yükleniyor...")
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             
 

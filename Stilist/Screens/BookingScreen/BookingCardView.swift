@@ -39,9 +39,7 @@ struct BookingCardView: View {
                         .font(.footnote)
                         .foregroundColor(.green)
                         .padding(6)
-                        //.background(booking.statusColor.opacity(0.2))
                         .cornerRadius(10)
-                    Color.green
                 case .upcoming:
                     Text(appointment.status.rawValue)
                         .font(.footnote)

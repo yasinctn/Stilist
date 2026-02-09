@@ -34,8 +34,10 @@ struct SuccessAppointmentAlert: View {
                         
                         Text("Randevunuz başarıyla oluşturuldu")
                             .padding()
-                        
-                        BookingCardView(appointment: appointment!)
+
+                        if let appointment = appointment {
+                            BookingCardView(appointment: appointment)
+                        }
                         
                         
                         Button(action: {

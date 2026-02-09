@@ -18,7 +18,8 @@ struct AdminTabViewContent: View {
     @EnvironmentObject var salonDetailViewModel: SalonDetailViewModel
     @EnvironmentObject var exploreViewModel: ExploreViewModel
     @EnvironmentObject var specialistHomeViewModel: SpecialistHomeViewModel
-    
+    @EnvironmentObject var bookingsViewModel: BookingsViewModel
+
     @State var selectedTab: Tab = .home
     
     
@@ -40,7 +41,7 @@ struct AdminTabViewContent: View {
             // My Booking tab
             MyBookingView()
                 .environmentObject(navigationViewModel)
-                .environmentObject(BookingsViewModel())
+                .environmentObject(bookingsViewModel)
                 .tabItem {
                     Image(systemName: "calendar")
                     Text("My Booking")

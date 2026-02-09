@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftUICore
 
 final class SpecialistHomeViewModel: ObservableObject {
     
@@ -24,12 +23,14 @@ final class SpecialistHomeViewModel: ObservableObject {
     
     func fetchAppointments() {
         guard let userId = authViewModel?.currentUser?.id else { return }
-        bookingService?.fetchAppointments(userId: userId, status: .upcoming, completion: { result in
-            switch result {
-            case .success(let appointments):
-                self.appointments = appointments
-            case .failure(let error):
-                print(error)
+        bookingService?.fetchAppointments(userId: userId, status: .upcoming, completion: { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let appointments):
+                    self?.appointments = appointments
+                case .failure(let error):
+                    print(error)
+                }
             }
         })
     }
