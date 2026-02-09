@@ -70,13 +70,8 @@ struct ContentView: View {
                         .transition(.slide)
                 }
             } else {
-                VStack(spacing: 16) {
-                    ProgressView()
-                        .scaleEffect(1.5)
-                    Text("Yükleniyor...")
-                        .foregroundColor(.secondary)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                LoadingView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             
 

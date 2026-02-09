@@ -13,6 +13,7 @@ class AppointmentViewModel: ObservableObject {
     
     @Published var specialists: [Specialist] = []
     @Published var appointments: [Appointment] = []
+    @Published var isLoading = false
     
     private let bookingService: BookingServiceProtocol
     private let firestoreService: FirestoreService
@@ -24,18 +25,17 @@ class AppointmentViewModel: ObservableObject {
     }
     
     func fetchSpecialists(salonId: String) async {
+        DispatchQueue.main.async { self.isLoading = true }
         firestoreService.fetchSpecialists(salonId: salonId) { error, specialist in
-            if let error = error {
-                print(error.localizedDescription)
-            }else {
-                if let specialist {
-                    DispatchQueue.main.async {
-                        self.specialists = specialist
-                    }
+            DispatchQueue.main.async {
+                self.isLoading = false
+                if let error = error {
+                    print(error.localizedDescription)
+                } else if let specialist {
+                    self.specialists = specialist
                 }
             }
         }
-        
     }
     
     func saveAppointment(userId: String,

@@ -33,11 +33,13 @@ struct MyBookingView: View {
             
             // Booking List
             ScrollView {
-                
-                if selectedTab == "Yaklaşan" {
+                if viewModel.isLoading {
+                    LoadingView()
+                        .padding(.top, 40)
+                } else if selectedTab == "Yaklaşan" {
                     if viewModel.upcomingBookings.isEmpty {
                         EmptyBookingsView()
-                    }else {
+                    } else {
                         ForEach(viewModel.upcomingBookings) { booking in
                             BookingCardView(appointment: booking, showActions: true)
                         }
@@ -45,7 +47,7 @@ struct MyBookingView: View {
                 } else if selectedTab == "Tamamlanan" {
                     if viewModel.completedBookings.isEmpty {
                         EmptyBookingsView()
-                    }else {
+                    } else {
                         ForEach(viewModel.completedBookings) { booking in
                             BookingCardView(appointment: booking, showActions: false)
                         }
@@ -53,7 +55,7 @@ struct MyBookingView: View {
                 } else {
                     if viewModel.cancelledBookings.isEmpty {
                         EmptyBookingsView()
-                    }else {
+                    } else {
                         ForEach(viewModel.cancelledBookings) { booking in
                             BookingCardView(appointment: booking, showActions: false)
                         }

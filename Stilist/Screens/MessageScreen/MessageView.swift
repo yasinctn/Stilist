@@ -24,6 +24,11 @@ struct MessageView: View {
     var body: some View {
         
                 VStack {
+                    if messageViewModel.isLoading {
+                        Spacer()
+                        LoadingView()
+                        Spacer()
+                    } else {
                     ScrollView {
                         VStack(spacing: 10) {
                             ForEach(messageViewModel.messages) { message in
@@ -33,6 +38,7 @@ struct MessageView: View {
                                 .padding(.horizontal)
                             }
                         }
+                    }
                     }
                     // Message Input
                     HStack {
@@ -81,7 +87,7 @@ struct MessageView: View {
                     }
                     .padding()
                 }
-                .navigationTitle(barberName ?? "loading")
+                .navigationTitle(barberName ?? "Mesajlar")
                 .onAppear {
                     if let chat {
                         senderID = authViewModel.currentUser?.id

@@ -98,9 +98,12 @@ struct HomeView: View {
                     }
                     .padding(.horizontal)
                     
-                    if homeViewModel.salons.isEmpty {
-                        ProgressView("Loading...")
-                            .progressViewStyle(CircularProgressViewStyle())
+                    if homeViewModel.isLoading {
+                        LoadingView()
+                            .padding()
+                    } else if homeViewModel.salons.isEmpty {
+                        Text("Yakınında salon bulunamadı.")
+                            .foregroundColor(.secondary)
                             .padding()
                     } else {
                         ScrollView(.horizontal, showsIndicators: false) {

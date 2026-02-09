@@ -15,6 +15,7 @@ final class ChatViewModel: ObservableObject {
     
     @Published var chats : [Chat] = []
     @Published var createdChatID: String?
+    @Published var isLoading = false
     private let chatService: ChatServiceProtocol?
     
     
@@ -24,15 +25,16 @@ final class ChatViewModel: ObservableObject {
     
     func fetchChats(_ id: String?)  {
         guard let id else { return }
+        isLoading = true
         chatService?.fetchChats(forUser: id, completion: { result in
-            switch result {
-            case.success(let chats):
-                print(chats)
-                DispatchQueue.main.async {
+            DispatchQueue.main.async {
+                self.isLoading = false
+                switch result {
+                case.success(let chats):
                     self.chats = chats
+                case .failure( let error):
+                    print(error.localizedDescription)
                 }
-            case .failure( let error):
-                print(error.localizedDescription)
             }
         })
     }

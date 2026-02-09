@@ -56,23 +56,36 @@ struct ChatsView: View {
                     .padding()
                     
                     
-                    List {
-                        ForEach(chatViewModel.chats) { chat in
-                            
+                    if chatViewModel.isLoading {
+                        Spacer()
+                        LoadingView()
+                        Spacer()
+                    } else if chatViewModel.chats.isEmpty {
+                        Spacer()
+                        VStack(spacing: 8) {
+                            Image(systemName: "bubble.left.and.bubble.right")
+                                .font(.largeTitle)
+                                .foregroundColor(.secondary)
+                            Text("Henüz sohbet yok")
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
+                    } else {
+                        List {
+                            ForEach(chatViewModel.chats) { chat in
                                 NavigationLink {
                                     MessageView(chat: chat)
                                         .environmentObject(MessageViewModel())
                                         .environmentObject(authViewModel)
                                         .environmentObject(chatViewModel)
                                         .environmentObject(navigationViewModel)
-                                    
                                 } label: {
                                     ChatCell(chat: chat)
                                 }
-                            
+                            }
                         }
+                        .listStyle(PlainListStyle())
                     }
-                    .listStyle(PlainListStyle())
                     
                 }
                 .navigationBarHidden(true)

@@ -10,6 +10,7 @@ import Foundation
 final class MessageViewModel: ObservableObject {
     
     @Published var messages: [Message] = []
+    @Published var isLoading = false
     private var chatService: ChatServiceProtocol
     
     init(chatService: ChatServiceProtocol = ChatService()) {
@@ -23,16 +24,14 @@ extension MessageViewModel {
         let validParticipants = participants.compactMap { $0 }
 
         if let chatID = chatID {
-            print(chatID)
+            DispatchQueue.main.async { self.isLoading = true }
             chatService.fetchMessages(for: chatID) { error, messages in
-                if let error = error {
-                    print("Error fetching messages: \(error.localizedDescription)")
-                } else {
-                    guard let messages = messages else {
-                        print("No messages")
-                        return
-                    }
-                    DispatchQueue.main.async {
+                DispatchQueue.main.async {
+                    self.isLoading = false
+                    if let error = error {
+                        print("Error fetching messages: \(error.localizedDescription)")
+                    } else {
+                        guard let messages = messages else { return }
                         self.messages = messages
                     }
                 }

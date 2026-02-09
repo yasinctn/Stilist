@@ -25,13 +25,17 @@ struct ProfileView: View {
                             .frame(width: 80, height: 80)
                             .clipShape(Circle())
                         
-                        Text(authViewModel.currentUser?.name ?? "Loading...")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                        
-                        Text(authViewModel.currentUser?.email ?? "Loading...")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
+                        if authViewModel.currentUser != nil {
+                            Text(authViewModel.currentUser?.name ?? "")
+                                .font(.title2)
+                                .fontWeight(.bold)
+
+                            Text(authViewModel.currentUser?.email ?? "")
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                        } else {
+                            LoadingView()
+                        }
                     }
                     .padding(.vertical, 20)
                     

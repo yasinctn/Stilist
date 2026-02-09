@@ -47,9 +47,8 @@ struct ExploreView: View {
                         
                         
                     } else {
-                        Text("Fetching your location...")
-                            .foregroundColor(.gray)
-                            .font(.headline)
+                        LoadingView("Konumunuz alınıyor...")
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
                     
                 }else {

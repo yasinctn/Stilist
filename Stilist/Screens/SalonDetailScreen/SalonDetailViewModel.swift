@@ -16,15 +16,18 @@ final class SalonDetailViewModel: ObservableObject {
     @Published var reviews: [Review] = []
     @Published var specialists: [Specialist] = []
     @Published var services: [Service] = []
-    
+    @Published var isLoading = false
+
     init(firestoreService: FirestoreServiceProtocol? = FirestoreService()) {
         self.firestoreService = firestoreService
     }
-    
+
     func getSalonDetail(for salonId: String?) async {
         if let salonId {
+            DispatchQueue.main.async { self.isLoading = true }
             firestoreService?.fetchSalonDetails(salonId: salonId, completion: { salonDetail in
                 DispatchQueue.main.async {
+                    self.isLoading = false
                     if let salonDetail {
                         self.salonDetail = salonDetail
                         self.reviews = salonDetail.reviews ?? []
@@ -34,12 +37,10 @@ final class SalonDetailViewModel: ObservableObject {
                         print("salon hatası")
                     }
                 }
-                
             })
         }else {
             print("id yok")
         }
-        
     }
     
     func getSpecialists(for salonId: String) async {

@@ -13,10 +13,26 @@ struct SpecialistHomeView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     
     var body: some View {
-        List(viewModel.appointments) { appointment in
-            
-            BookingCardView(appointment: appointment)
-            
+        Group {
+            if viewModel.isLoading {
+                LoadingView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if viewModel.appointments.isEmpty {
+                VStack(spacing: 12) {
+                    Spacer()
+                    Image(systemName: "calendar.badge.exclamationmark")
+                        .font(.largeTitle)
+                        .foregroundColor(.secondary)
+                    Text("Henüz randevu yok")
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity)
+            } else {
+                List(viewModel.appointments) { appointment in
+                    BookingCardView(appointment: appointment)
+                }
+            }
         }
         .onAppear {
             viewModel.fetchAppointments()

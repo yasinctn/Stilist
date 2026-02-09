@@ -13,22 +13,24 @@ final class HomeViewModel: ObservableObject {
     
     private let firestoreService: FirestoreServiceProtocol?
     @Published var salons: [Salon] = []
-    
+    @Published var isLoading = false
+
     init(firestoreService: FirestoreServiceProtocol? = FirestoreService()) {
         self.firestoreService = firestoreService
     }
-    
-    
+
+
     func getSalons() async {
+        DispatchQueue.main.async { self.isLoading = true }
         firestoreService?.fetchSalons { result in
-            
-            switch result {
+            DispatchQueue.main.async {
+                self.isLoading = false
+                switch result {
                 case .success(let salons):
-                DispatchQueue.main.async {
                     self.salons = salons
-                }
                 case .failure(let error):
-                print("Salonlar alınamadı: \(error.localizedDescription)")
+                    print("Salonlar alınamadı: \(error.localizedDescription)")
+                }
             }
         }
     }

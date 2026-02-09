@@ -18,6 +18,7 @@ final class ExploreViewModel: ObservableObject {
     @Published var selectedSalon: Salon? = nil
     @Published var cameraPosition: MapCameraPosition = .automatic 
     @Published var salons: [Salon] = []
+    @Published var isLoading = false
     private var userLocation: CLLocationCoordinate2D?
     
     init(firestoreService: FirestoreServiceProtocol? = FirestoreService()) {
@@ -32,17 +33,17 @@ final class ExploreViewModel: ObservableObject {
     }
     
     func getSalons() {
+        isLoading = true
         firestoreService?.fetchSalons { result in
-            switch result {
-            case .success(let salons):
-                DispatchQueue.main.async {
+            DispatchQueue.main.async {
+                self.isLoading = false
+                switch result {
+                case .success(let salons):
                     self.salons = salons
-                    print("yenilendi")
+                case .failure(let error):
+                    print(error.localizedDescription)
                 }
-            case .failure(let error):
-                print(error.localizedDescription)
             }
-            
         }
     }
     

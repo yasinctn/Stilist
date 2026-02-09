@@ -34,7 +34,11 @@ struct AppointmentView: View {
                     Text("Uzman Seçin")
                         .font(.headline)
                         .padding(.top)
-                    
+
+                    if viewModel.isLoading {
+                        LoadingView()
+                            .padding()
+                    }
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 10) {
                             ForEach(viewModel.specialists) { specialist in
