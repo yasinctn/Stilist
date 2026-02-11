@@ -18,20 +18,21 @@ struct SalonDetail: Codable {
     var reviewCount: Int?
     var isOpen: Bool?
     var specialists: [Specialist]?
-    var workingHours: [WorkingHours]? // Haftanın günlerine göre çalışma saatleri
+    var workingHours: [WorkingHours]?
     var services: [Service]?
     var reviews: [Review]?
     var latitude: Double?
     var longitude: Double?
 }
 
-struct WorkingHours: Codable {
-    let day: String? // Örneğin: "Monday"
-    let openTime: String? // Örneğin: "08:00 AM"
-    let closeTime: String? // Örneğin: "09:00 PM"
+struct WorkingHours: Codable, Identifiable {
+    var id: String { day ?? UUID().uuidString }
+    let day: String?
+    let openTime: String?
+    let closeTime: String?
 }
 
-struct Service:Identifiable, Codable {
+struct Service: Identifiable, Codable {
     let id: String?
     let name: String?
     let description: String?

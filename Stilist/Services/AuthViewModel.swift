@@ -8,86 +8,72 @@
 import SwiftUI
 import FirebaseAuth
 
+@MainActor
 final class AuthViewModel: ObservableObject {
-    
+
     private var authService: AuthServiceProtocol?
     private var dbService: FirestoreServiceProtocol?
-    
+
     @Published var currentUser: AppUser?
     @Published var isSignedIn: Bool = false
-    
-    init(authService: AuthService? = AuthService(), dbService: FirestoreService? = FirestoreService()) {
+    @Published var isLoading: Bool = false
+    @Published var errorMessage: String?
+
+    init(authService: AuthServiceProtocol? = AuthService(), dbService: FirestoreServiceProtocol? = FirestoreService()) {
         self.dbService = dbService
-        self.authService = AuthService()
-        self.setCurrentUser()
+        self.authService = authService
         self.isSignedIn = Auth.auth().currentUser != nil
+        Task { await setCurrentUser() }
     }
-    
-    func setCurrentUser() {
-        
-        dbService?.getUserData(id: Auth.auth().currentUser?.uid, completion: { currentUser in
-        
-            guard let currentUser else { return }
-            
-            self.currentUser = currentUser
-            
-            
-        })
+
+    func setCurrentUser() async {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        do {
+            self.currentUser = try await dbService?.getUserData(id: uid)
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
     }
-    
-    // Kullanıcı Oluşturma
-    func createUser(name: String, surname: String, email: String, phoneNumber: String, password: String, role: UserRole, completion: @escaping (Error?) -> Void) {
-        authService?.createUser(name: name, surname: surname, email: email, phoneNumber: phoneNumber, password: password, role: role, completion: { [ weak self ] error in
-            guard let self else { return }
-            if let error = error {
-                print(error.localizedDescription)
-                completion(error)
-            }else {
-                setCurrentUser()
-                self.isSignedIn = true
-                completion(nil)
-            }
-        })
+
+    func createUser(name: String, surname: String, email: String, phoneNumber: String, password: String, role: UserRole) async {
+        isLoading = true
+        do {
+            let user = try await authService?.createUser(name: name, surname: surname, email: email, phoneNumber: phoneNumber, password: password, role: role)
+            self.currentUser = user
+            self.isSignedIn = true
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+        isLoading = false
     }
-    
-    func saveSpecialistToSalon(name: String, surname: String, email: String, phoneNumber: String, role: UserRole, salonID: String, completion: @escaping (Error?) -> Void) {
-        
-        authService?.addSpecialistToSalon(name: name, surname: surname, email: email, phoneNumber: phoneNumber, role: role, salonID: salonID, completion: { error in
-            if let error {
-                print("uzman kaydedilemedi " + error.localizedDescription)
-            }else {
-                print("uzman kaydedildi")
-            }
-        })
+
+    func saveSpecialistToSalon(name: String, surname: String, email: String, phoneNumber: String, role: UserRole, salonID: String) async {
+        do {
+            try await authService?.addSpecialistToSalon(name: name, surname: surname, email: email, phoneNumber: phoneNumber, role: role, salonID: salonID)
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
     }
-    
-    // Oturum Açma
-    func signIn(email: String, password: String, completion: @escaping (Error?) -> Void) {
-        authService?.signIn(email: email, password: password, completion: { [weak self] error in
-            guard let self else { return }
-            if let error = error {
-                print(error.localizedDescription)
-                completion(error)
-            }else {
-                setCurrentUser()
-                self.isSignedIn = true
-                completion(nil)
-            }
-        })
+
+    func signIn(email: String, password: String) async {
+        isLoading = true
+        do {
+            try await authService?.signIn(email: email, password: password)
+            await setCurrentUser()
+            self.isSignedIn = true
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+        isLoading = false
     }
-    
-    // Çıkış Yapma
-    func signOut(completion: @escaping (Error?) -> Void) {
-        authService?.signOut(completion: { [ weak self ] error in
-            guard let self else { return }
-            if let error = error {
-                print(error.localizedDescription)
-                completion(error)
-            }else {
-                self.isSignedIn = false
-                completion(nil)
-            }
-        })
+
+    func signOut() {
+        do {
+            try authService?.signOut()
+            self.currentUser = nil
+            self.isSignedIn = false
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
     }
 }
-    

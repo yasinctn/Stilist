@@ -43,9 +43,8 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
         let geocoder = CLGeocoder()
         geocoder.geocodeAddressString(addressString) { (placemarks, error) in
             if error == nil {
-                if let placemark = placemarks?[0] {
-                    let location = placemark.location!
-                        
+                if let placemark = placemarks?[0],
+                   let location = placemark.location {
                     completionHandler(location.coordinate, nil)
                     return
                 }
@@ -80,6 +79,6 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("Failed to get user location: \(error.localizedDescription)")
+        // Location error: \(error.localizedDescription)
     }
 }

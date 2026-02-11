@@ -9,126 +9,80 @@ import Foundation
 import Firebase
 import FirebaseFirestore
 
-
 protocol ChatServiceProtocol: AnyObject {
-    func checkOrCreateChat(participants: [String], completion: @escaping (Result<String, Error>) -> Void)
-    func fetchChats(forUser userId: String, completion: @escaping (Result<[Chat], Error>) -> Void)
-    func addMessage(chatID: String, message: Message, completion: @escaping (Error?) -> Void)
-    func fetchMessages(for chatId: String, completion: @escaping (Error?, [Message]?) -> Void)
+    func checkOrCreateChat(participants: [String]) async throws -> String
+    func fetchChats(forUser userId: String) async throws -> [Chat]
+    func addMessage(chatID: String, message: Message) async throws
+    func fetchMessages(for chatId: String) async throws -> [Message]
 }
 
 final class ChatService: ChatServiceProtocol {
-    
+
     private let db = Firestore.firestore()
-    
-    
-    func checkOrCreateChat(participants: [String], completion: @escaping (Result<String, Error>) -> Void) {
+
+    func checkOrCreateChat(participants: [String]) async throws -> String {
         let sortedParticipants = participants.sorted()
 
-        db.collection("chats").whereField("participants", isEqualTo: sortedParticipants).getDocuments { (querySnapshot, error) in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
+        let snapshot = try await db.collection("chats")
+            .whereField("participants", isEqualTo: sortedParticipants)
+            .getDocuments()
 
-            if let querySnapshot = querySnapshot, !querySnapshot.documents.isEmpty {
-                if let existingChat = querySnapshot.documents.first {
-                    let chatID = existingChat.documentID
-                    completion(.success(chatID))
-                }
-            } else {
-                let chatID = UUID().uuidString
+        if let existingChat = snapshot.documents.first {
+            return existingChat.documentID
+        }
 
-                let chatData: [String: Any] = [
-                    "id": chatID,
-                    "participants": sortedParticipants,
-                    "createdAt": FieldValue.serverTimestamp() // Optional: add timestamp
-                ]
+        let chatID = UUID().uuidString
+        let chatData: [String: Any] = [
+            "id": chatID,
+            "participants": sortedParticipants,
+            "createdAt": FieldValue.serverTimestamp()
+        ]
 
-                self.db.collection("chats").document(chatID).setData(chatData) { error in
-                    if let error = error {
-                        completion(.failure(error))
-                    } else {
-                        completion(.success(chatID))
-                    }
-                }
+        try await db.collection("chats").document(chatID).setData(chatData)
+        return chatID
+    }
+
+    func fetchChats(forUser userId: String) async throws -> [Chat] {
+        let snapshot = try await db.collection("chats")
+            .whereField("participants", arrayContains: userId)
+            .getDocuments()
+
+        var chats: [Chat] = []
+
+        for doc in snapshot.documents {
+            let data = doc.data()
+            guard let participants = data["participants"] as? [String] else { continue }
+
+            if let lastMessage = try? await fetchLastMessage(for: doc.documentID) {
+                let chat = Chat(
+                    id: doc.documentID,
+                    participants: participants,
+                    lastMessage: lastMessage.content,
+                    lastMessageTimestamp: lastMessage.timestamp.description,
+                    isUnread: !lastMessage.isRead
+                )
+                chats.append(chat)
             }
         }
+
+        return chats
     }
 
-    func fetchChats(forUser userId: String, completion: @escaping (Result<[Chat], Error>) -> Void) {
-        db.collection("chats")
-            .whereField("participants", arrayContains: userId)
-            .getDocuments { snapshot, error in
-                if let error = error {
-                    completion(.failure(error))
-                    return
-                }
-
-                guard let documents = snapshot?.documents else {
-                    completion(.success([]))
-                    print("No documents found")
-                    return
-                }
-
-                let group = DispatchGroup()
-                var chats: [Chat] = []
-
-                for doc in documents {
-                    group.enter()
-
-                    let data = doc.data()
-                    guard let participants = data["participants"] as? [String] else {
-                        print("Participants field missing in: \(doc.data())")
-                        group.leave()
-                        continue
-                    }
-
-                    self.fetchLastMessage(for: doc.documentID) { result in
-                        switch result {
-                        case .success(let lastMessage):
-                            let chat = Chat(
-                                id: doc.documentID,
-                                participants: participants,
-                                lastMessage: lastMessage.content,
-                                lastMessageTimestamp: lastMessage.timestamp.description,
-                                isUnread: !lastMessage.isRead
-                            )
-                            chats.append(chat)
-                        case .failure(let error):
-                            print("Error fetching last message: \(error.localizedDescription)")
-                        }
-                        group.leave()
-                    }
-                }
-
-                group.notify(queue: .main) {
-                    completion(.success(chats))
-                }
-            }
-    }
-
-    private func fetchLastMessage(for chatID: String, completion: @escaping (Result<Message, Error>) -> Void) {
-        db.collection("chats").document(chatID).collection("messages")
+    private func fetchLastMessage(for chatID: String) async throws -> Message {
+        let snapshot = try await db.collection("chats").document(chatID).collection("messages")
             .order(by: "timestamp", descending: true)
             .limit(to: 1)
-            .getDocuments { snapshot, error in
-                if let error = error {
-                    completion(.failure(error))
-                    return
-                }
+            .getDocuments()
 
-                guard let document = snapshot?.documents.first else {
-                    completion(.failure(NSError(domain: "ChatService", code: 404, userInfo: [NSLocalizedDescriptionKey: "No messages found"])))
-                    return
-                }
+        guard let document = snapshot.documents.first else {
+            throw NSError(domain: "ChatService", code: 404, userInfo: [NSLocalizedDescriptionKey: "Mesaj bulunamadı."])
+        }
 
-                if let message = self.parseMessage(from: document) {
-                    completion(.success(message))
-                } else {
-                    completion(.failure(NSError(domain: "ChatService", code: 500, userInfo: [NSLocalizedDescriptionKey: "Invalid message data"])))
-                }
-            }
+        guard let message = parseMessage(from: document) else {
+            throw NSError(domain: "ChatService", code: 500, userInfo: [NSLocalizedDescriptionKey: "Mesaj verisi dönüştürülemedi."])
+        }
+
+        return message
     }
 
     private func parseMessage(from document: QueryDocumentSnapshot) -> Message? {
@@ -142,7 +96,6 @@ final class ChatService: ChatServiceProtocol {
             let timestamp = (data["timestamp"] as? Timestamp)?.dateValue(),
             let isRead = data["isRead"] as? Bool
         else {
-            print("Invalid message data: \(data)")
             return nil
         }
 
@@ -157,13 +110,11 @@ final class ChatService: ChatServiceProtocol {
         )
     }
 
-    
-    func addMessage(chatID: String, message: Message, completion: @escaping (Error?) -> Void) {
-        
+    func addMessage(chatID: String, message: Message) async throws {
         guard let messageID = message.id else {
-            fatalError("Message ID must not be nil")
+            throw NSError(domain: "ChatService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Mesaj ID'si bulunamadı."])
         }
-        
+
         let messageData: [String: Any] = [
             "id": messageID,
             "chatId": message.chatId,
@@ -173,60 +124,18 @@ final class ChatService: ChatServiceProtocol {
             "timestamp": message.timestamp,
             "isRead": message.isRead
         ]
-        
-        
-        
-        db.collection("chats").document(chatID).collection("messages").document(messageID).setData(messageData) { error in
-            if let error = error {
-                completion(error)
-            } else {
-                completion(nil)
-            }
+
+        try await db.collection("chats").document(chatID).collection("messages")
+            .document(messageID).setData(messageData)
+    }
+
+    func fetchMessages(for chatId: String) async throws -> [Message] {
+        let snapshot = try await db.collection("chats").document(chatId).collection("messages")
+            .order(by: "timestamp", descending: false)
+            .getDocuments()
+
+        return snapshot.documents.compactMap { doc -> Message? in
+            parseMessage(from: doc)
         }
     }
-    
-
-    func fetchMessages(for chatId: String, completion: @escaping (Error?, [Message]?) -> Void) {
-            let chatRef = self.db.collection("chats").document(chatId).collection("messages")
-            
-            chatRef
-                .order(by: "timestamp", descending: false)
-                .getDocuments { snapshot, error in
-                    if let error = error {
-                        completion(error, nil)
-                        return
-                    }
-                    
-                    guard let documents = snapshot?.documents else {
-                        completion(nil, nil)
-                        return
-                    }
-                    
-                    let messages = documents.compactMap { doc -> Message? in
-                        let data = doc.data()
-                        
-                        guard
-                            let chatId = data["chatId"] as? String,
-                            let senderId = data["senderId"] as? String,
-                            let receiverId = data["receiverId"] as? String,
-                            let content = data["content"] as? String,
-                            let timestamp = (data["timestamp"] as? Timestamp)?.dateValue(),
-                            let isRead = data["isRead"] as? Bool
-                        else { print("dönüştürülemedi");return nil }
-                        
-                        return Message(
-                            id: doc.documentID,
-                            chatId: chatId,
-                            senderId: senderId,
-                            receiverId: receiverId,
-                            content: content,
-                            timestamp: timestamp,
-                            isRead: isRead
-                        )
-                    }
-                    completion(nil, messages)
-                }
-        
-    }
-    
 }
