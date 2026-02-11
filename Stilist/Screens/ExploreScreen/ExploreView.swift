@@ -23,15 +23,25 @@ struct ExploreView: View {
     
     var body: some View {
         
-        NavigationView {
+        NavigationStack {
             ZStack {
                 if !viewModel.isSearchEnabled {
-                    if locationManager.userLocation != nil {
-                        
+                    if viewModel.isLoading || locationManager.userLocation == nil {
+                        LoadingView(locationManager.userLocation == nil ? "Konumunuz alınıyor..." : "Salonlar yükleniyor...")
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else if viewModel.salons.isEmpty {
+                        VStack(spacing: 12) {
+                            Image(systemName: "mappin.slash")
+                                .font(.system(size: 40))
+                                .foregroundColor(.gray)
+                            Text("Yakınında salon bulunamadı")
+                                .font(.headline)
+                                .foregroundColor(.secondary)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else {
                         Map {
-                            
                             ForEach(viewModel.salons) { salon in
-                                
                                 Annotation(salon.name, coordinate: salon.coordinate) {
                                     Button(action: {
                                         viewModel.selectedSalon = salon
@@ -40,15 +50,9 @@ struct ExploreView: View {
                                             .foregroundColor(.orange)
                                             .font(.title)
                                     }
-                                    
                                 }
                             }
                         }
-                        
-                        
-                    } else {
-                        LoadingView("Konumunuz alınıyor...")
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
                     
                 }else {
@@ -137,11 +141,14 @@ struct ExploreView: View {
                     }
                 }
             }
-            .navigationBarHidden(true)
+            .toolbar(.hidden, for: .navigationBar)
         }
         .onAppear {
-            viewModel.getSalons()
+            Task {
+                await viewModel.getSalons()
+            }
         }
+        .errorAlert(message: $viewModel.errorMessage)
     }
 }
 

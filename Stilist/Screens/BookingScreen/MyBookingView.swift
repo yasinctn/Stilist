@@ -19,15 +19,9 @@ struct MyBookingView: View {
         VStack {
             // Tab Selector
             HStack {
-                BookingTabButton(title: "Yaklaşan", selectedTab: $selectedTab, action: {
-                    viewModel.fetchBookings(userId: authViewModel.currentUser?.id ?? "", status: .upcoming)
-                })
-                BookingTabButton(title: "Tamamlanan", selectedTab: $selectedTab, action: {
-                    viewModel.fetchBookings(userId: authViewModel.currentUser?.id ?? "", status: .completed)
-                })
-                BookingTabButton(title: "İptal", selectedTab: $selectedTab, action: {
-                    viewModel.fetchBookings(userId: authViewModel.currentUser?.id ?? "", status: .cancelled)
-                })
+                BookingTabButton(title: "Yaklaşan", selectedTab: $selectedTab, action: {})
+                BookingTabButton(title: "Tamamlanan", selectedTab: $selectedTab, action: {})
+                BookingTabButton(title: "İptal", selectedTab: $selectedTab, action: {})
             }
             .padding(.horizontal)
             
@@ -66,7 +60,12 @@ struct MyBookingView: View {
         }
         .background(Color(UIColor.systemBackground))
         .ignoresSafeArea(edges: .bottom)
-        
+        .onAppear {
+            Task {
+                await viewModel.fetchBookings(userId: authViewModel.currentUser?.id ?? "")
+            }
+        }
+        .errorAlert(message: $viewModel.errorMessage)
     }
 }
 

@@ -15,7 +15,7 @@ struct ProfileView: View {
     @State private var errorMessage: String?
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 VStack {
                     
@@ -68,12 +68,7 @@ struct ProfileView: View {
                         
                         Section {
                             Button(action: {
-                                authViewModel.signOut { error in
-                                    if let error {
-                                        errorMessage = error.localizedDescription
-                                        showAlert = true
-                                    }
-                                }
+                                authViewModel.signOut()
                             }) {
                                 Label("Çıkış Yap", systemImage: "arrow.backward.square")
                                     .foregroundColor(.red)

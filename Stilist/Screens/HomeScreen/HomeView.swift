@@ -9,11 +9,6 @@ import SwiftUI
 import CoreLocation
 import MapKit
 
-extension CLLocationCoordinate2D {
-    // Some place in Miami
-    static let coffeeShopCoordinate = CLLocationCoordinate2D(latitude: 25.865208, longitude: -80.121807)
-}
-
 struct HomeView: View {
     
     @EnvironmentObject var navigationViewModel: NavigationViewModel
@@ -28,7 +23,7 @@ struct HomeView: View {
     @Binding var selectedTab: Tab
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(alignment: .leading, spacing: 20) {
                 
                 HStack {
@@ -57,10 +52,12 @@ struct HomeView: View {
                 
                 //Map
                 
-                Map(initialPosition: .region(MKCoordinateRegion(center: locationManager.userLocation ?? .coffeeShopCoordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)))) {
-                    
-                    Marker("siz", coordinate: locationManager.userLocation ?? .coffeeShopCoordinate)
-                        .tint(.orange)
+                Map(initialPosition: .region(MKCoordinateRegion(center: locationManager.userLocation ?? CLLocationCoordinate2D(latitude: 41.0082, longitude: 28.9784), span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)))) {
+
+                    if let userLocation = locationManager.userLocation {
+                        Marker("siz", coordinate: userLocation)
+                            .tint(.orange)
+                    }
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 15))
                     .padding()
@@ -143,6 +140,7 @@ struct HomeView: View {
                 await homeViewModel.getSalons()
             }
         }
+        .errorAlert(message: $homeViewModel.errorMessage)
     }
 }
 

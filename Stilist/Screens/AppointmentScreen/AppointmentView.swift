@@ -70,7 +70,7 @@ struct AppointmentView: View {
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 10) {
-                            ForEach(["09:00", "10:00", "11:00", "12:00", "13:00", "14:00"], id: \.self) { time in
+                            ForEach(["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"], id: \.self) { time in
                                 Text(time)
                                     .padding()
                                     .background(selectedTime == time ? Color.orange : Color.gray.opacity(0.2))
@@ -87,12 +87,12 @@ struct AppointmentView: View {
                         if let userId = authViewModel.currentUser?.id,
                            let userName = authViewModel.currentUser?.name,
                            let specialistName = selectedSpecialistName {
-                            viewModel.saveAppointment(userId: userId, userName: userName, specialistName: specialistName, specialistID: selectedSpecialistId, selectedDate: selectedDate, selectedTime: selectedTime) { appointment in
-                                self.createdAppointment = appointment
-                                self.showSuccessAlert = true
+                            Task {
+                                if let appointment = await viewModel.saveAppointment(userId: userId, userName: userName, specialistName: specialistName, specialistID: selectedSpecialistId, selectedDate: selectedDate, selectedTime: selectedTime) {
+                                    self.createdAppointment = appointment
+                                    self.showSuccessAlert = true
+                                }
                             }
-                        }else {
-                            print("userID gelmedi")
                         }
                     }) {
                         Text("Oluştur")
@@ -114,10 +114,9 @@ struct AppointmentView: View {
                     Task {
                         await viewModel.fetchSpecialists(salonId: selectedSalonID)
                     }
-                }else {
-                    print("salon id gelmedi")
                 }
             }
+            .errorAlert(message: $viewModel.errorMessage)
         
     }
 }

@@ -18,8 +18,11 @@ struct LoginView: View {
     @State private var showAlert = false
     
     @State private var errorMessage: String?
-    
-    
+
+    private var isFormValid: Bool {
+        !email.isEmpty && email.contains("@") && !password.isEmpty && password.count >= 6
+    }
+
     var body: some View {
         ZStack {
             VStack(spacing: 20) {
@@ -33,35 +36,19 @@ struct LoginView: View {
                 
                 // Email & Password Fields
                 VStack(spacing: 15) {
-                    TextField("Email", text: $email)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .keyboardType(.emailAddress)
-                        .overlay(
-                            HStack {
-                                Spacer()
-                                Image(systemName: "envelope")
-                                    .padding()
-                            }
-                            .padding(.leading, 10)
-                            .foregroundColor(.gray)
-                        )
-                    
-                    SecureField("Parola", text: $password)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .keyboardType(.numberPad)
-                        .overlay(
-                            HStack {
-                                Spacer()
-                                Image(systemName: "lock")
-                                    .padding()
-                            }
-                            .padding(.leading, 10)
-                            .foregroundColor(.gray)
-                        )
+                    StyledTextField(
+                        placeholder: "Email",
+                        iconName: "envelope",
+                        text: $email,
+                        keyboardType: .emailAddress
+                    )
+
+                    StyledTextField(
+                        placeholder: "Parola",
+                        iconName: "lock",
+                        text: $password,
+                        isSecure: true
+                    )
                 }
                 .padding(.horizontal, 30)
                 
@@ -84,16 +71,14 @@ struct LoginView: View {
                 
                 Button(action: {
                     //giriş işlemi
-                    authViewModel.signIn(email: email, password: password) { error in
-                        
-                        if let error = error {
-                            
-                            errorMessage = error.localizedDescription
+                    Task {
+                        await authViewModel.signIn(email: email, password: password)
+                        if let error = authViewModel.errorMessage {
+                            errorMessage = error
                             showAlert = true
-                            print(showAlert)
                         }
                     }
-                    
+
                 }) {
                     Text("Giriş yap")
                         .fontWeight(.semibold)
@@ -104,7 +89,14 @@ struct LoginView: View {
                         .cornerRadius(8)
                 }
                 .padding(.horizontal, 30)
-                
+                .disabled(!isFormValid || authViewModel.isLoading)
+                .opacity(isFormValid && !authViewModel.isLoading ? 1.0 : 0.6)
+
+                if authViewModel.isLoading {
+                    ProgressView()
+                        .padding(.top, 5)
+                }
+
                 Spacer()
                     .frame(height: 20)
                 

@@ -22,8 +22,19 @@ struct AboutUsView: View {
             VStack(alignment: .leading, spacing: 5) {
                 Text("Çalışma Saatleri")
                     .font(.headline)
-                Text("Hafta içi: 08:00 - 21:00")
-                Text("Hafta sonu: 10:00 - 20:00 ")
+                if let workingHours = salonDetail?.workingHours, !workingHours.isEmpty {
+                    ForEach(workingHours) { hours in
+                        HStack {
+                            Text(hours.day ?? "")
+                                .fontWeight(.medium)
+                            Spacer()
+                            Text("\(hours.openTime ?? "") - \(hours.closeTime ?? "")")
+                        }
+                    }
+                } else {
+                    Text("Bilgi mevcut değil")
+                        .foregroundColor(.secondary)
+                }
             }
             .padding(.top)
             

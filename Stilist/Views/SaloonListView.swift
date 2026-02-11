@@ -13,7 +13,7 @@ struct SalonListView: View {
     
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 // Search Bar
                 HStack {
@@ -55,7 +55,7 @@ struct SalonListView: View {
                  */
             }
             .navigationTitle("")
-            .navigationBarHidden(true)
+            .toolbar(.hidden, for: .navigationBar)
         }
     }
 }

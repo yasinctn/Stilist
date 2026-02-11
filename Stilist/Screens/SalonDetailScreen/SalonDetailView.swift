@@ -24,6 +24,16 @@ struct SalonDetailView: View {
             if viewModel.isLoading {
                 LoadingView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if viewModel.salonDetail == nil {
+                VStack(spacing: 12) {
+                    Image(systemName: "exclamationmark.triangle")
+                        .font(.system(size: 40))
+                        .foregroundColor(.gray)
+                    Text("Salon bilgisi bulunamadı")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 ScrollView {
                     VStack(alignment: .leading) {
@@ -153,6 +163,7 @@ struct SalonDetailView: View {
                 }
             }
         }
+        .errorAlert(message: $viewModel.errorMessage)
     }
 }
 

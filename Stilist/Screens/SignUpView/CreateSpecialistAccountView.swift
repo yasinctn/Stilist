@@ -22,8 +22,11 @@ struct CreateSpecialistAccountView: View {
     @State private var salonCode = ""
     
     @State private var errorMessage: String?
-    
-    
+
+    private var isFormValid: Bool {
+        !name.isEmpty && !surname.isEmpty && !email.isEmpty && email.contains("@") && !phoneNumber.isEmpty && !salonCode.isEmpty && !password.isEmpty && password.count >= 6
+    }
+
     var body: some View {
         ZStack {
             VStack(spacing: 20) {
@@ -37,7 +40,7 @@ struct CreateSpecialistAccountView: View {
                 
                 // Profile Picture Placeholder
                 ZStack {
-                    Image(systemName: "Person.crop.circle.fill")
+                    Image(systemName: "person.crop.circle.fill")
                         .resizable()
                         .foregroundStyle(Color.white)
                         .frame(width: 90, height: 90)
@@ -57,71 +60,49 @@ struct CreateSpecialistAccountView: View {
                 
                 // Form Fields
                 VStack(spacing: 15) {
-                    TextField("Ad", text: $name)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                    
-                    TextField("Soyad", text: $surname)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                    
-                    TextField("Email", text: $email)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .keyboardType(.emailAddress)
-                    
-                    
-                    TextField("Telefon", text: $phoneNumber)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .keyboardType(.numberPad)
-                    
-                    TextField("Salon Kodu", text: $salonCode)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .keyboardType(.default)
-                    
-                    TextField("Parola", text: $password)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .keyboardType(.default)
-                        
-                    
-                   
-                    
+                    StyledTextField(placeholder: "Ad", text: $name)
+
+                    StyledTextField(placeholder: "Soyad", text: $surname)
+
+                    StyledTextField(
+                        placeholder: "Email",
+                        text: $email,
+                        keyboardType: .emailAddress
+                    )
+
+                    StyledTextField(
+                        placeholder: "Telefon",
+                        text: $phoneNumber,
+                        keyboardType: .numberPad
+                    )
+
+                    StyledTextField(placeholder: "Salon Kodu", text: $salonCode)
+
+                    StyledTextField(
+                        placeholder: "Parola",
+                        text: $password,
+                        isSecure: true
+                    )
                 }
                 
                 .padding(.horizontal, 30)
                 
                 // Continue Button
                 Button(action: {
-                    authViewModel.createUser(name: name, surname: surname, email: email, phoneNumber: phoneNumber, password: password, role: .specialist) { error in
-                        if let error = error {
-                            errorMessage = error.localizedDescription
+                    Task {
+                        await authViewModel.createUser(name: name, surname: surname, email: email, phoneNumber: phoneNumber, password: password, role: .specialist)
+                        if let error = authViewModel.errorMessage {
+                            errorMessage = error
                             showAlert = true
-                            print(error.localizedDescription)
-                            
-                        
-                        }else {
-                            print("kullanıcı oluşturuldu")
+                        } else {
+                            await authViewModel.saveSpecialistToSalon(name: name, surname: surname, email: email, phoneNumber: phoneNumber, role: .specialist, salonID: salonCode)
+                            if let error = authViewModel.errorMessage {
+                                errorMessage = error
+                                showAlert = true
+                            }
                         }
                     }
-                    authViewModel.saveSpecialistToSalon(name: name, surname: surname, email: email, phoneNumber: phoneNumber, role: .specialist, salonID: salonCode) { error in
-                            if let error {
-                                errorMessage = error.localizedDescription
-                                showAlert = true
-                                print(error.localizedDescription)
-                            }else {
-                                print("kullanıcı kaydedildi")
-                            }
-                    }
-                    
+
                 }) {
                     Text("Kaydol")
                         .fontWeight(.semibold)
@@ -132,6 +113,13 @@ struct CreateSpecialistAccountView: View {
                         .cornerRadius(8)
                 }
                 .padding(.horizontal, 30)
+                .disabled(!isFormValid || authViewModel.isLoading)
+                .opacity(isFormValid && !authViewModel.isLoading ? 1.0 : 0.6)
+
+                if authViewModel.isLoading {
+                    ProgressView()
+                        .padding(.top, 5)
+                }
                 Spacer()
                 
                 

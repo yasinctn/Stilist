@@ -50,30 +50,26 @@ struct MessageView: View {
                             .cornerRadius(20)
                             
                         Button(action: {
-                            
-                            
+
+
                             // Gönderici ve alıcı bilgisi kontrolü
                             if senderID == nil || receiverID == nil {
-                                print("Gönderici veya alıcı bilgisi eksik. Sadece chatID ile işlem yapılacak.")
-                                
-                                
-                            } else {
-                                print("Gönderici: \(senderID ?? "Yok"), Alıcı: \(receiverID ?? "Yok")")
+                                // Gönderici veya alıcı bilgisi eksik
                             }
-                            
+
                             // Mesaj gönderme işlemi
                             if !messageText.isEmpty {
-                                messageViewModel.sendMessage(senderId: senderID, receiverId: receiverID, messageText: messageText, chatID: chatID)
-                                
-                                guard let senderID, let receiverID else {
-                                    return
+                                Task {
+                                    await messageViewModel.sendMessage(senderId: senderID, receiverId: receiverID, messageText: messageText)
+
+                                    guard let senderID, let receiverID else {
+                                        return
+                                    }
+                                    await messageViewModel.getMessages(chatID: messageViewModel.chatID, participants: [senderID, receiverID])
                                 }
-                                messageViewModel.getMessages(chatID: chatID, participants: [senderID, receiverID])
-                                
-                            } else {
-                                print("Mesaj metni boş")
+
                             }
-                            
+
                             // Mesaj metnini sıfırla
                             messageText = ""
                         }) {
@@ -93,9 +89,13 @@ struct MessageView: View {
                         senderID = authViewModel.currentUser?.id
                         receiverID = chat.participants.first(where: { $0 != senderID })
                         chatID = chat.id
+                        messageViewModel.chatID = chat.id
                     }
-                    messageViewModel.getMessages(chatID: chatID, participants: [senderID, receiverID])
+                    Task {
+                        await messageViewModel.getMessages(chatID: chatID, participants: [senderID, receiverID])
+                    }
                 }
+                .errorAlert(message: $messageViewModel.errorMessage)
             
         
     }

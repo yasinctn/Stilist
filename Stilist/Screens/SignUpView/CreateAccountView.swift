@@ -21,8 +21,11 @@ struct CreateAccountView: View {
     @State private var password = ""
     
     @State private var errorMessage: String?
-    
-    
+
+    private var isFormValid: Bool {
+        !name.isEmpty && !surname.isEmpty && !email.isEmpty && email.contains("@") && !phoneNumber.isEmpty && !password.isEmpty && password.count >= 6
+    }
+
     var body: some View {
         ZStack {
             VStack(spacing: 20) {
@@ -36,7 +39,7 @@ struct CreateAccountView: View {
                 
                 // Profile Picture Placeholder
                 ZStack {
-                    Image(systemName: "Person.crop.circle.fill")
+                    Image(systemName: "person.crop.circle.fill")
                         .resizable()
                         .foregroundStyle(Color.white)
                         .frame(width: 100, height: 90)
@@ -56,48 +59,39 @@ struct CreateAccountView: View {
                 
                 // Form Fields
                 VStack(spacing: 15) {
-                    TextField("Ad", text: $name)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                    
-                    TextField("Soyad", text: $surname)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                    
-                    TextField("Email", text: $email)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .keyboardType(.emailAddress)
-                    
-                    
-                    TextField("Telefon", text: $phoneNumber)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .keyboardType(.numberPad)
-                    
-                    TextField("Parola", text: $password)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .keyboardType(.numberPad)
+                    StyledTextField(placeholder: "Ad", text: $name)
+
+                    StyledTextField(placeholder: "Soyad", text: $surname)
+
+                    StyledTextField(
+                        placeholder: "Email",
+                        text: $email,
+                        keyboardType: .emailAddress
+                    )
+
+                    StyledTextField(
+                        placeholder: "Telefon",
+                        text: $phoneNumber,
+                        keyboardType: .numberPad
+                    )
+
+                    StyledTextField(
+                        placeholder: "Parola",
+                        text: $password,
+                        isSecure: true
+                    )
                 }
                 .padding(.horizontal, 30)
                     // Continue Button
                     Button(action: {
-                        authViewModel.createUser(name: name, surname: surname, email: email, phoneNumber: phoneNumber, password: password, role: .customer) { error in
-                            if let error = error {
-                                errorMessage = error.localizedDescription
+                        Task {
+                            await authViewModel.createUser(name: name, surname: surname, email: email, phoneNumber: phoneNumber, password: password, role: .customer)
+                            if let error = authViewModel.errorMessage {
+                                errorMessage = error
                                 showAlert = true
-                                print(error.localizedDescription)
-                                
-                                
                             }
                         }
-                    
+
                     }) {
                         Text("Kaydol")
                             .fontWeight(.semibold)
@@ -108,6 +102,13 @@ struct CreateAccountView: View {
                             .cornerRadius(8)
                     }
                     .padding(.horizontal, 30)
+                    .disabled(!isFormValid || authViewModel.isLoading)
+                    .opacity(isFormValid && !authViewModel.isLoading ? 1.0 : 0.6)
+
+                    if authViewModel.isLoading {
+                        ProgressView()
+                            .padding(.top, 5)
+                    }
                     Spacer()
                     
                     HStack {

@@ -15,60 +15,60 @@ struct CreateSaloonAccountView: View {
     @EnvironmentObject private var navigationViewModel: NavigationViewModel
     @EnvironmentObject private var authViewModel: AuthViewModel
     
+    @State private var showAlert: Bool = false
+    @State private var errorMessage: String?
+
     @State var saloonName = ""
     @State var userName = ""
     @State var email = ""
     @State var phoneNumber = ""
     @State var address = ""
     @State var password = ""
-    
-    
+
+    private var isFormValid: Bool {
+        !saloonName.isEmpty && !email.isEmpty && email.contains("@") && !phoneNumber.isEmpty && !address.isEmpty && !password.isEmpty && password.count >= 6
+    }
+
     var body: some View {
-        NavigationView {
+        ZStack {
+        NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
                     
-                    TextField("İşletme Adı", text: $saloonName)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                    
-                    
-                    TextField("Mail Adresi", text: $email)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .keyboardType(.emailAddress)
-                    
-                    TextField("Telefon Numarası", text: $phoneNumber)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .keyboardType(.phonePad)
-                    
-                    TextField("Adres", text: $address)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                    
-                    
-                    SecureField("Parola", text: $password)
-                        .textFieldStyle(.plain)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
+                    StyledTextField(placeholder: "İşletme Adı", text: $saloonName)
+
+                    StyledTextField(
+                        placeholder: "Mail Adresi",
+                        text: $email,
+                        keyboardType: .emailAddress
+                    )
+
+                    StyledTextField(
+                        placeholder: "Telefon Numarası",
+                        text: $phoneNumber,
+                        keyboardType: .phonePad
+                    )
+
+                    StyledTextField(placeholder: "Adres", text: $address)
+
+                    StyledTextField(
+                        placeholder: "Parola",
+                        text: $password,
+                        isSecure: true
+                    )
                     Spacer()
                     Button(action: {
-                        
+
                         locationManager.convertAddress(address: address)
-                        
-                        authViewModel.createUser(name: userName, surname: userName, email: email, phoneNumber: phoneNumber, password: password, role: .admin) { error in
-                            if let error {
-                                
-                                print(error.localizedDescription)
+
+                        Task {
+                            await authViewModel.createUser(name: saloonName, surname: "", email: email, phoneNumber: phoneNumber, password: password, role: .admin)
+                            if let error = authViewModel.errorMessage {
+                                errorMessage = error
+                                showAlert = true
                             }
                         }
-                        
+
                     } ) {
                         Text("Kaydol")
                             .fontWeight(.bold)
@@ -78,8 +78,15 @@ struct CreateSaloonAccountView: View {
                             .foregroundColor(.white)
                             .cornerRadius(10)
                     }
+                    .disabled(!isFormValid || authViewModel.isLoading)
+                    .opacity(isFormValid && !authViewModel.isLoading ? 1.0 : 0.6)
+
+                    if authViewModel.isLoading {
+                        ProgressView()
+                            .padding(.top, 5)
+                    }
                 }
-                
+
             }
             .padding(.horizontal)
             .padding(.bottom, 30)
@@ -87,6 +94,9 @@ struct CreateSaloonAccountView: View {
         .navigationTitle(
             Text("Kuaför Kaydı")
         )
+
+            AlertView(isPresented: $showAlert, message: errorMessage)
+        }
     }
 }
 

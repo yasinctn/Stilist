@@ -35,8 +35,11 @@ struct SpecialistHomeView: View {
             }
         }
         .onAppear {
-            viewModel.fetchAppointments()
+            Task {
+                await viewModel.fetchAppointments(userId: authViewModel.currentUser?.id ?? "")
+            }
         }
+        .errorAlert(message: $viewModel.errorMessage)
     }
 }
 

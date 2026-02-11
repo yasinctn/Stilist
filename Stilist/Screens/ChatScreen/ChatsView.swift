@@ -15,7 +15,7 @@ struct ChatsView: View {
     
     var body: some View {
         
-            NavigationView {
+            NavigationStack {
                 VStack {
                     HStack {
                         Text("Sohbetler")
@@ -88,11 +88,14 @@ struct ChatsView: View {
                     }
                     
                 }
-                .navigationBarHidden(true)
+                .toolbar(.hidden, for: .navigationBar)
             }
             .onAppear {
-                chatViewModel.fetchChats(authViewModel.currentUser?.id)
+                Task {
+                    await chatViewModel.fetchChats(authViewModel.currentUser?.id)
+                }
             }
+            .errorAlert(message: $chatViewModel.errorMessage)
         
         
         
