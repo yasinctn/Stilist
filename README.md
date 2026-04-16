@@ -1,6 +1,6 @@
 # Stilist 💇‍♂️💇‍♀️
 
-**Stilist** is a modern mobile platform designed to revolutionize the hair salon experience for both customers and stylists. It simplifies the process of finding salons, booking appointments, and managing schedules — all through an intuitive and secure app.
+**Stilist** is a modern iOS mobile platform designed to revolutionize the hair salon experience. Built with SwiftUI and Firebase, it serves three primary user groups — customers, stylists, and salon managers — through an intuitive and secure app.
 
 ---
 
@@ -12,16 +12,28 @@
 
 ---
 
+## 👥 User Roles
+
+| Feature                  | Customer | Stylist | Manager |
+|--------------------------|:--------:|:-------:|:-------:|
+| Salon Discovery          | ✅       | ❌      | ❌      |
+| Appointment Booking      | ✅       | ❌      | ❌      |
+| Calendar Management      | ✅       | ✅      | ✅      |
+| In-App Messaging         | ✅       | ✅      | ✅      |
+| Revenue Analytics        | ❌       | ✅      | ✅      |
+
+---
+
 ## 📱 Key Features
 
 ### For Customers:
-- 🔍 **Salon Discovery:** Search for salons based on location and filters.
+- 🔍 **Salon Discovery:** Search for salons based on location and filters via Apple MapKit.
 - 📅 **Appointment Booking:** Choose date/time and book directly with available stylists.
 - 👤 **Salon Profiles & Reviews:** View detailed information and customer feedback.
 - 💬 **Secure Messaging:** Communicate directly with salons through in-app chat.
 - ❌ **Appointment Cancellation:** Reschedule or cancel bookings easily.
 
-### For Stylists/Salon Owners:
+### For Stylists/Salon Managers:
 - 🗓️ **Appointment Management:** Accept, manage, or cancel appointments with ease.
 - 📈 **Analytics Dashboard:** Monitor performance, booking efficiency, and revenue.
 - 🧑‍💼 **Customer Communication:** Respond to messages and maintain client relationships.
@@ -30,23 +42,46 @@
 
 ## 🔐 User Flow
 
-1. **Registration:** Users sign up using email and password.
-2. **Salon Search:** Use location or filters to find suitable salons.
-3. **Appointment:** Browse profiles and book available slots.
-4. **Messaging:** Communicate with stylists through a secure interface.
-5. **Manage Appointments:** Cancel or reschedule if needed.
+1. **Registration:** Users sign up using email and password via Firebase Authentication.
+2. **Role Routing:** `ContentView` evaluates auth state and user role, presenting the appropriate interface.
+3. **Salon Search:** Use location or filters to find suitable salons.
+4. **Appointment:** Browse profiles and book available slots.
+5. **Messaging:** Communicate with stylists through a secure interface.
+6. **Manage Appointments:** Cancel or reschedule if needed.
+
+---
+
+## 🏗️ Architecture
+
+The app follows the **MVVM (Model-View-ViewModel)** design pattern.
+
+- `StilistApp` is the entry point and initializes all Firebase services on launch.
+- `ContentView` acts as the root router — it instantiates all primary ViewModels as `@StateObject` and distributes them down the view hierarchy via `.environmentObject()`.
+- A protocol-based service layer abstracts all Firestore data access, keeping ViewModels testable and decoupled from Firebase internals.
+
+---
+
+## 🧩 Modules
+
+| Module              | Description                                                   |
+|---------------------|---------------------------------------------------------------|
+| **Authentication**  | Secure session management with Firebase Auth                  |
+| **Salon Discovery** | Location-based search and filtering powered by Apple MapKit   |
+| **Appointments**    | Real-time reservation creation, management, and cancellation  |
+| **Messaging**       | In-app chat between customers and salons                      |
+| **Data Layer**      | Protocol-based Firestore service layer for all data access    |
 
 ---
 
 ## ⚙️ Tech Stack
 
-### ✅ Mobile App
-- **iOS:** SwiftUI
-
-### ✅ Backend & Infrastructure
-- **Database:** Firebase Firestore – Fast, scalable, and secure cloud storage.
-- **Cloud Services:** Firebase – Real-time data sync and authentication.
-- **APIs:** Integration with map/location services for better salon discovery.
+| Layer           | Technology                        |
+|-----------------|-----------------------------------|
+| **Frontend**    | SwiftUI (iOS)                     |
+| **Auth**        | Firebase Authentication           |
+| **Database**    | Firebase Firestore                |
+| **Maps**        | Apple MapKit                      |
+| **Architecture**| MVVM                              |
 
 ---
 
@@ -58,6 +93,8 @@
 - 🔐 **Secure Platform:** Strong focus on user privacy and data protection.
 
 ---
+
+## 📸 Screenshots
 
 <img width="266" height="568" alt="image" src="https://github.com/user-attachments/assets/f85ba36e-17d9-489d-a370-9c3f1f389a26" />
 <img width="254" height="548" alt="image" src="https://github.com/user-attachments/assets/6ca7ec33-3af9-4f44-97c0-5e36d4c2ce54" />
@@ -75,8 +112,3 @@
 <img width="273" height="592" alt="image" src="https://github.com/user-attachments/assets/b49603e8-b51e-4d58-b34d-3edf345a2dfb" />
 <img width="286" height="620" alt="image" src="https://github.com/user-attachments/assets/62162139-8ab8-42f9-955d-31fd65bd56bc" />
 <img width="287" height="620" alt="image" src="https://github.com/user-attachments/assets/4a892771-c7c0-468c-865f-4bb81bc73eb5" />
-
-
-
-
-
